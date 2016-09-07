@@ -11,10 +11,11 @@
     $infoArea = '<div>' . $infoText . $terminateButton . '</div>';
     $infoBox = '<div class="infoBox">' . $infoArea . '</div>';
     $spinnerContainer = '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div>' . $infoBox . '</div>';
-    $button = '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' . $spinnerContainer . '</div>';
+    $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
+    $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
 
 
-    $this->layout()->searchbox = $introText . $button;
+    $this->layout()->searchbox = $introText . $searchButtonArea;
     
     $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');
    

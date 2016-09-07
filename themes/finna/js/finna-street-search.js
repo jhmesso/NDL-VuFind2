@@ -1,6 +1,5 @@
 finna.StreetSearch = (function() {
-    var ssButton, terminateButton, spinner, spinnerContainer,
-        getPositionSuccess;
+    var ssButton, terminateButton, spinner, spinnerContainer, getPositionSuccess, xhr;
     
     var doStreetSearch = function() {
         spinnerContainer.show();

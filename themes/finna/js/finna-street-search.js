@@ -3,11 +3,11 @@ finna.StreetSearch = (function() {
         getPositionSuccess;
     
     var doStreetSearch = function() {
-	spinnerContainer.show();
-	spinnerContainer.find('.fa-spinner').show();
-	terminate = false;
-	terminateButton.show();
-	ssButton.hide(); 
+        spinnerContainer.show();
+        spinnerContainer.find('.fa-spinner').show();
+        terminate = false;
+        terminateButton.show();
+        ssButton.hide(); 
 
         ssInfo(VuFind.translate('street_search_checking_for_geolocation'), 'continues');
 
@@ -22,10 +22,10 @@ finna.StreetSearch = (function() {
 
     var terminateStreetSearch = function() {
         terminate = true;
-	xhr.abort();
+        xhr.abort();
         terminateButton.hide();
         spinnerContainer.hide();
-	ssButton.show();
+        ssButton.show();
     }
    
     var geoLocationError = function(error) {
@@ -64,9 +64,9 @@ finna.StreetSearch = (function() {
         url = reverseGeocodeService + '?' + $.param(queryParameters);
 
         xhr = $.ajax({
-		method: "GET",
-		dataType: "json",
-		url: url
+                method: "GET",
+                dataType: "json",
+                url: url
         })
         .done(function(data) {
             if (data.features[0] && (street = data.features[0].properties.street) &&
@@ -119,24 +119,24 @@ finna.StreetSearch = (function() {
         ssButton = $("#street-search-button");
         terminateButton = $("#street-search-terminate");
         buttonArea = $("#street-search-button-area");
-	spinnerContainer = $("#street-search-spinner");
-	spinnerContainer.hide();
+        spinnerContainer = $("#street-search-spinner");
+        spinnerContainer.hide();
         terminateButton.hide();
         terminate = false;
 
         ssButton.click(function() {
             doStreetSearch();
         });
-	
+        
         terminateButton.click(function() {
-	    terminateStreetSearch();
+            terminateStreetSearch();
         });
     }
 
     var my = {
         init: function() {
             getPositionSuccess = false;
-	    initPageElements();
+            initPageElements();
         }
     };
     return my;

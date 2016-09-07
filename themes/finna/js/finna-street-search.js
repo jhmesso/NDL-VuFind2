@@ -1,5 +1,5 @@
 finna.StreetSearch = (function() {
-    var ssButton, terminateButton, buttonArea, spinner, spinnerContainer,
+    var ssButton, terminateButton, spinner, spinnerContainer,
         getPositionSuccess;
     
     var doStreetSearch = function() {
@@ -118,10 +118,10 @@ finna.StreetSearch = (function() {
     var initPageElements = function () {
         ssButton = $("#street-search-button");
         terminateButton = $("#street-search-terminate");
-        buttonArea = $("#street-search-button-area");
+        terminateButton.hide();
         spinnerContainer = $("#street-search-spinner");
         spinnerContainer.hide();
-        terminateButton.hide();
+
         terminate = false;
 
         ssButton.click(function() {

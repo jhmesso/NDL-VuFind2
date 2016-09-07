@@ -14,7 +14,6 @@
     $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
     $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
 
-
     $this->layout()->searchbox = $introText . $searchButtonArea;
     
     $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');

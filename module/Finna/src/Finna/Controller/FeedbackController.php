@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,8 +51,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      */
     public function emailAction()
     {
-        $view = $this->createViewModel();
-        $view->useRecaptcha = $this->recaptcha()->active('feedback');
         $category = $this->params()->fromPost('category');
         $name = $this->params()->fromPost('name');
         $users_email = $this->params()->fromPost('email');
@@ -65,6 +63,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             if (empty($captcha)
                 || $captcha != $this->translate('feedback_captcha_answer')
             ) {
+                $view = $this->createViewModel();
                 $view->setTemplate('feedback/home');
                 $view->category = $category;
                 $view->name = $name;
@@ -82,7 +81,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
                 throw new \Exception('Email address is invalid');
             }
 
-            // These settings are set in the feedback section of your config.ini
+            // These settings are set in the feedback settion of your config.ini
             $config = $this->getServiceLocator()->get('VuFind\Config')
                 ->get('config');
             $feedback = isset($config->Feedback) ? $config->Feedback : null;
@@ -92,7 +91,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
                 ? $feedback->recipient_name : 'Your Library';
             $email_subject = isset($feedback->email_subject)
                 ? $feedback->email_subject : 'VuFind Feedback';
-            $email_subject .= ' (' . $this->translate($category) . ')';
+            $email_subject .= ' (' .  $this->translate($category) . ')';
             $sender_email = isset($feedback->sender_email)
                 ? $feedback->sender_email : 'noreply@vufind.org';
             $sender_name = isset($feedback->sender_name)
@@ -119,12 +118,14 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             $mail->setEncoding('UTF-8');
             $mail->setBody($email_message);
             $mail->setFrom($sender_email, $sender_name);
+            $mail->setReplyTo($sender_email);
             $mail->addTo($recipient_email, $recipient_name);
             $mail->setSubject($email_subject);
             $headers = $mail->getHeaders();
             $headers->removeHeader('Content-Type');
             $headers->addHeaderLine('Content-Type', 'text/plain; charset=UTF-8');
 
+            $view = $this->createViewModel();
             try {
                 $this->getServiceLocator()->get('VuFind\Mailer')->getTransport()
                     ->send($mail);

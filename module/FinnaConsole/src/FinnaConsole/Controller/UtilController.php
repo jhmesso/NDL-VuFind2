@@ -38,6 +38,17 @@ namespace FinnaConsole\Controller;
  */
 class UtilController extends \VuFindConsole\Controller\UtilController
 {
+
+    /**
+     * Sends reminders for expiring user accounts
+     *
+     * @return \Zend\Console\Response
+     */
+    public function accountExpirationRemindersAction()
+    {
+        return $this->runService('Finna\AccountExpirationReminders');
+    }
+
     /**
      * Clears expired MetaLib searches from the database.
      *

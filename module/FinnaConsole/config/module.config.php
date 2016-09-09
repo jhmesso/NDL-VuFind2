@@ -10,6 +10,7 @@ $config = [
     'service_manager' => [
         'factories' => [
             'VuFind\HMAC' => 'VuFind\Service\Factory::getHMAC',
+            'Finna\AccountExpirationReminders' => 'FinnaConsole\Service\Factory::getAccountExpirationReminders',
             'Finna\ClearMetalibSearch' => 'FinnaConsole\Service\Factory::getClearMetaLibSearch',
             'Finna\DueDateReminders' => 'FinnaConsole\Service\Factory::getDueDateReminders',
             'Finna\EncryptCatalogPasswords' => 'FinnaConsole\Service\Factory::getEncryptCatalogPasswords',

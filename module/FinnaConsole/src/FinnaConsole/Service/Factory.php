@@ -42,6 +42,21 @@ use Zend\Console\Console,
  */
 class Factory
 {
+
+    /**
+     * Construct the console service for reminding on expiring user accounts
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return \FinnaConsole\Service\AccountExpirationReminders
+     */
+    public static function getAccountExpirationReminders(ServiceManager $sm)
+    {
+        $table = $sm->get('VuFind\DbTablePluginManager')->get('User');
+        return new AccountExpirationReminders($table,$sm);
+    }
+
+
     /**
      * Construct the console service for clearing expired MetaLib searches.
      *

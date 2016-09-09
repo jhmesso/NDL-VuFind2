@@ -133,7 +133,8 @@ class AccountExpirationReminders extends AbstractService
     protected function getUsersToRemind($days,$remindDaysBefore,$frequency)
     {
 
-        $remindingDays = array();
+        $remindingDaysBegin = array();
+        $remindingDaysEnd = array();
 
         for ($x = $remindDaysBefore; $x > 0; $x -= $frequency) {
             $remindingDaysBegin[] = date('Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days + $x)));

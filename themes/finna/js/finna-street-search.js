@@ -21,10 +21,12 @@ finna.StreetSearch = (function() {
 
     var terminateStreetSearch = function() {
         terminate = true;
-        xhr.abort();
         terminateButton.hide();
         spinnerContainer.hide();
         ssButton.show();
+	if (typeof xhr !== 'undefined') {
+            xhr.abort();
+	}
     }
    
     var geoLocationError = function(error) {
@@ -84,7 +86,8 @@ finna.StreetSearch = (function() {
         if (!terminate) {
             ssInfo(VuFind.translate('street_search_searching_for') + ' ' + street + ' ' + city, 'stopped');
 
-            resultsUrl = VuFind.path + '/Search/Results';
+            // resultsUrl = VuFind.path + '/Search/Results';
+            resultsUrl = (VuFind.path.match(/vufind/)) ? "https://finna.fi/Search/Results" : VuFind.path + '/Search/Results';
             
             queryParameters = {
                 'lookfor' : street + ' ' + city,

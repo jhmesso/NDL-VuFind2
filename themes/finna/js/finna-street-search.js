@@ -24,9 +24,9 @@ finna.StreetSearch = (function() {
         terminateButton.hide();
         spinnerContainer.hide();
         ssButton.show();
-	if (typeof xhr !== 'undefined') {
+        if (typeof xhr !== 'undefined') {
             xhr.abort();
-	}
+        }
     }
    
     var geoLocationError = function(error) {

@@ -88,19 +88,7 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        /* TODO: Tama pitaa laittaa kuntoon 
-         *
-        if (!$viewPath = $this->resolveViewPath($this->currentInstitution)) {
-            $this->err(
-                "Could not resolve view path"
-            );
-            return false;
-        } 
-
-        $siteConfig = $viewPath . '/local/config/vufind/config.ini';
-        */
-
-        $siteConfig = '/usr/local/vufind/local/config/vufind/config.ini';
+        $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini");
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind($arguments[0],$arguments[1],$arguments[2]);

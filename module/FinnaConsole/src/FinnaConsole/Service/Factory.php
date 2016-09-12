@@ -53,7 +53,8 @@ class Factory
     public static function getAccountExpirationReminders(ServiceManager $sm)
     {
         $table = $sm->get('VuFind\DbTablePluginManager')->get('User');
-        return new AccountExpirationReminders($table,$sm);
+        $renderer = $sm->get('viewmanager')->getRenderer();
+        return new AccountExpirationReminders($table,$renderer,$sm);
     }
 
 

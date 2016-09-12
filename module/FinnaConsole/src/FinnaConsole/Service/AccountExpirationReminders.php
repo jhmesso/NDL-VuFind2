@@ -29,6 +29,8 @@
 namespace FinnaConsole\Service;
 use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
+use Zend\View\Resolver\AggregateResolver;
+use Zend\View\Resolver\TemplatePathStack;
 
 /**
  * Console service for reminding users x days before account expiration
@@ -42,6 +44,15 @@ use Zend\ServiceManager\ServiceManager;
  */
 class AccountExpirationReminders extends AbstractService
 {
+
+
+    /**
+     * View renderer
+     *
+     * @var Zend\View\Renderer\PhpRenderer
+     */
+    protected $renderer = null;
+
     /**
      * Table for user accounts
      *
@@ -63,13 +74,15 @@ class AccountExpirationReminders extends AbstractService
      * Constructor
      *
      * @param Finna\Db\Table\User            $table                User table.
+     * @param Zend\View\Renderer\PhpRenderer $renderer             View renderer.
      * @param ServiceManager                 $serviceManager       Service manager.
      */
     public function __construct (
-        $table, $serviceManager
+        $table, $renderer, $serviceManager
     ) {
         $this->table = $table;
         $this->serviceManager = $serviceManager; 
+        $this->renderer = $renderer;
     }
 
     /**
@@ -89,6 +102,7 @@ class AccountExpirationReminders extends AbstractService
         }
 
         $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
+        /* vai if (!$path = $this->resolveViewPath($institution, $view)) { ScheduledAlerts.php:stä */
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind($arguments[0],$arguments[1],$arguments[2]);
@@ -101,7 +115,7 @@ class AccountExpirationReminders extends AbstractService
         }
 
         if ($count === 0) {
-            $this->msg('No user accounts to remind.');
+            $this->msg('No user accounts to remind.'); /*  */
         } else {
             $this->msg("$count expiring user accounts reminded.");
         }
@@ -173,18 +187,36 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
+        $params = [
+            'library' => 'Palvelun_nimi',
+            'username' => $user->username,
+            'name' => $user->username,
+            'email' => $user->email
+        ];
 
-        /* TODO: Tekstit ja käännökset
-           $subject = $this->translator->translate('your_account_is_expiring_email_subject');
-           $message = $this->renderer->render("Email/your_account_is_expiring.phtml", $params); 
-        */
+        /* TODO: Millä selvitetään asennuksen juuri fiksummin */
+        $templateDirs = [
+            getenv('VUFIND_LOCAL_DIR') . "/../themes/finna/templates",
+        ];
 
-        $subject = "Testimuistutus";
-        $message = "Käyttäjätunnuksesi vanhenee <pvm>";
+        $resolver = new AggregateResolver();
+        $this->renderer->setResolver($resolver);
+        $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
+        $resolver->attach($stack);
+
+        /* TODO: Kieliversiot */
+        $subject = "Käyttäjätunnuksesi vanhenee"; 
+        $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
 
         try {
             $to = $user->email;
             $from = $this->currentSiteConfig['Site']['email'];
+
+            /*
+            $this->msg("SUBJ: $subject");
+            $this->msg("MSG: $message");
+            */
+
             $this->serviceManager->get('VuFind\Mailer')->send(
                 $to, $from, $subject, $message
             );

@@ -88,7 +88,7 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini");
+        $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind($arguments[0],$arguments[1],$arguments[2]);

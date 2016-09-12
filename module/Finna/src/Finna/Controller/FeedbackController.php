@@ -119,7 +119,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             $mail->setEncoding('UTF-8');
             $mail->setBody($email_message);
             $mail->setFrom($sender_email, $sender_name);
-            $mail->setReplyTo($users_email);
+            $mail->setReplyTo($users_email); 
             $mail->addTo($recipient_email, $recipient_name);
             $mail->setSubject($email_subject);
             $headers = $mail->getHeaders();

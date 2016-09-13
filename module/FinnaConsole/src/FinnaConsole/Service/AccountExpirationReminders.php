@@ -73,18 +73,27 @@ class AccountExpirationReminders extends AbstractService
     protected $serviceManager = null;
 
     /**
+     * Translator
+     *
+     * @var \VuFind\Translator
+     */
+    protected $translator = null;
+
+    /**
      * Constructor
      *
      * @param Finna\Db\Table\User            $table                User table.
      * @param Zend\View\Renderer\PhpRenderer $renderer             View renderer.
+     * @param VuFind\Translator              $translator           Translator.
      * @param ServiceManager                 $serviceManager       Service manager.
      */
     public function __construct (
-        $table, $renderer, $serviceManager
+        $table, $renderer, $translator, $serviceManager
     ) {
         $this->table = $table;
-        $this->serviceManager = $serviceManager; 
         $this->renderer = $renderer;
+        $this->translator = $translator;
+        $this->serviceManager = $serviceManager; 
     }
 
     /**
@@ -189,9 +198,28 @@ class AccountExpirationReminders extends AbstractService
         $expiration_datetime = new DateTime($user->finna_last_login);
         $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));
 
+        $urlInstitution = "www"; /* TODO: Kaiva tama configeista */
+        $baseUrl = 'https://' . $urlInstitution . '.finna.fi';
+
+        $language = isset($this->currentSiteConfig['Site']['language'])
+            ? $this->currentSiteConfig['Site']['language'] : 'fi';
+        $validLanguages = array_keys($this->currentSiteConfig['Languages']);
+
+        if (!empty($user->finna_language)
+            && in_array($user->finna_language, $validLanguages)
+        ) {
+            $language = $user->finna_language;
+        }
+        $this->translator
+            ->addTranslationFile('ExtendedIni', null, 'default', $language)
+            ->setLocale($language);
+
+
         /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
         $params = [
             'serviceName' => $this->currentSiteConfig['Site']['title'],
+            'serviceURL' => $baseUrl,
+            'finna_auth_method' => $user->finna_auth_method,
             'username' => substr($user->username,1),
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
@@ -210,8 +238,9 @@ class AccountExpirationReminders extends AbstractService
         $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
         $resolver->attach($stack);
 
-        /* TODO: Kieliversiot */
-        $subject = "Käyttäjätunnuksesi palvelussa " . $params['serviceName'] . " vanhentuu " . $expiration_datetime->format('d.m.Y');
+        $subject = $this->translator->translate('account_exp_subject');
+        $subject .= " " . $expiration_datetime->format('d.m.Y');
+
         $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
 
         try {

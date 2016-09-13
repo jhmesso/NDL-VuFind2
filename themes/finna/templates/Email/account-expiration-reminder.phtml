@@ -1,11 +1,16 @@
-Hei <?=$this->firstname ?>,
+<?= $this->translate('account_exp_hello') ?> <?=$this->firstname ?>,
 
-Olet kirjautunut <?=$this->serviceName ?>-palveluun edellisen kerran <?=$this->lastLogin ?>.
+<?= $this->translate('account_exp_you_have_logged_in_last_time') ?> <?=$this->lastLogin ?>.
 
-Käyttäjätunnuksesi vanhentuu ja se muutetaan epäaktiiviseksi <?=$this->expireDate ?>, mikäli et sitä ennen kirjaudu uudelleen palveluun.
+<?= $this->translate('account_exp_your_account_will_expire_at') ?> <?=$this->expireDate ?><?= $this->translate('account_exp_if_you_dont_login_before that') ?>: <?=$this->serviceURL ?>
 
-Nimi: <?=$this->firstname ?> <?=$this->lastname ?>
 
-Käyttäjätunnus: <?=$this->username ?>
+<?= $this->translate('account_exp_name') ?>: <?=$this->firstname ?> <?=$this->lastname ?>
 
-Sähköpostiosoite: <?=$this->email ?>
+<?= $this->translate('account_exp_email') ?>: <?=$this->email ?>
+
+<?= $this->translate('account_exp_account') ?>: <?=$this->username ?>
+
+<?= $this->translate('account_exp_auth_method') ?>: <?=$this->finna_auth_method ?>
+
+

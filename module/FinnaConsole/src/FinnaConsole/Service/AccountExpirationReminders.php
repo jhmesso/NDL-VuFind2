@@ -191,7 +191,7 @@ class AccountExpirationReminders extends AbstractService
 
         /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
         $params = [
-            'library' => $this->currentSiteConfig['Site']['title'],
+            'serviceName' => $this->currentSiteConfig['Site']['title'],
             'username' => substr($user->username,1),
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
@@ -211,7 +211,7 @@ class AccountExpirationReminders extends AbstractService
         $resolver->attach($stack);
 
         /* TODO: Kieliversiot */
-        $subject = "Käyttäjätunnuksesi palvelussa " . $params['library'] . " vanhentuu " . $expiration_datetime->format('d.m.Y');
+        $subject = "Käyttäjätunnuksesi palvelussa " . $params['serviceName'] . " vanhentuu " . $expiration_datetime->format('d.m.Y');
         $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
 
         try {

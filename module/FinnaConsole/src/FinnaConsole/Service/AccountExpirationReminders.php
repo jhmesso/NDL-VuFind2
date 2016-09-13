@@ -32,6 +32,7 @@ use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
+
 use DateTime;
 use DateInterval;
 
@@ -47,6 +48,16 @@ use DateInterval;
  */
 class AccountExpirationReminders extends AbstractService
 {
+
+    /**
+     * Get the view renderer
+     *
+     * @return \Zend\View\Renderer\RendererInterface
+     */
+    protected function getViewRenderer()
+    {
+        return $this->getServiceLocator()->get('viewmanager')->getRenderer();
+    }
 
     /**
      * View renderer
@@ -198,8 +209,7 @@ class AccountExpirationReminders extends AbstractService
         $expiration_datetime = new DateTime($user->finna_last_login);
         $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));
 
-        $urlInstitution = "www"; /* TODO: Kaiva tama configeista */
-        $baseUrl = 'https://' . $urlInstitution . '.finna.fi';
+        $urlInstitution = $this->getServerUrl('myresearch-home'); 
 
         $language = isset($this->currentSiteConfig['Site']['language'])
             ? $this->currentSiteConfig['Site']['language'] : 'fi';
@@ -218,7 +228,7 @@ class AccountExpirationReminders extends AbstractService
         /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
         $params = [
             'serviceName' => $this->currentSiteConfig['Site']['title'],
-            'serviceURL' => $baseUrl,
+            'serviceURL' => $urlInstitution,
             'finna_auth_method' => $user->finna_auth_method,
             'username' => substr($user->username,1),
             'firstname' => $user->firstname,
@@ -262,6 +272,22 @@ class AccountExpirationReminders extends AbstractService
         /* TODO: Tänne ehkä myös lokitiedon kirjoitus kantaan lähetetyistä viesteistä */
 
         return true;
+    }
+
+    /**
+     * Get the full URL to one of VuFind's routes.
+     *
+     * @param bool|string $route Boolean true for current URL, otherwise name of
+     * route to render as URL
+     *
+     * @return string
+     */
+    public function getServerUrl($route = true)
+    {
+        $serverHelper = $this->getViewRenderer()->plugin('serverurl');
+        return $serverHelper(
+            $route === true ? true : $this->url()->fromRoute($route)
+        );
     }
 
 

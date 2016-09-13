@@ -79,7 +79,9 @@ return array(
         'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/slick.min.js',
         'vendor/jquery.touchSwipe.min.js',
-        'vendor/bootstrap-multiselect.min.js'
+        'vendor/bootstrap-multiselect.min.js',
+        'vendor/jquery-ui.min.js',
+        'vendor/jquery.ui.touch-punch.min.js',
     ),
     'less' => array(
         'active' => false

@@ -28,6 +28,9 @@
  */
 namespace Finna\Controller;
 
+use VuFind\Exception\Forbidden as ForbiddenException;
+use VuFind\Exception\ListPermission as ListPermissionException;
+
 /**
  * Controller for the user account area.
  *
@@ -213,6 +216,50 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $view->sortList = $this->createSortList();
+
+        return $view;
+    }
+
+    /**
+     * Show user's own favorite list (max. 1000) to the view
+     *
+     * @return mixed
+     */
+    public function sortListAction()
+    {
+        // Fail if lists are disabled:
+        if (!$this->listsEnabled()) {
+            throw new ForbiddenException('Lists disabled');
+        }
+
+        $listId = $this->params()->fromRoute('id');
+        if (null === $listId) {
+            throw new ListPermissionException('Cannot sort all favorites list');
+        }
+
+        // If we got this far, we just need to display the favorites:
+        try {
+            $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+
+            // We want to merge together GET, POST and route parameters to
+            // initialize our search object:
+            $request = $this->getRequest()->getQuery()->toArray()
+                + $this->getRequest()->getPost()->toArray()
+                + ['id' => $listId];
+
+            $setupCallback = function ($runner, $params, $searchId) {
+                $params->setLimit(1000);
+            };
+            $results = $runner->run($request, 'Favorites', $setupCallback);
+            return $this->createViewModel(
+                ['params' => $results->getParams(), 'results' => $results]
+            );
+        } catch (ListPermissionException $e) {
+            if (!$this->getUser()) {
+                return $this->forceLogin();
+            }
+            throw $e;
+        }
 
         return $view;
     }

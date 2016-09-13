@@ -580,6 +580,14 @@ finna.layout = (function() {
       }
     };
 
+    var initPreventModalClose = function() {
+      $('#modal').on('hide.bs.modal', function (e) {
+        if ($('#modal').find('.sortable-favorite-list').length > 0 && $(event.target).attr('id') == "modal") {
+          e.preventDefault();
+        }
+      });
+    };
+
     var initScrollRecord = function() {
         if (!$('section.main').is('.template-name-search, .template-name-results')) {
             return;
@@ -682,6 +690,7 @@ finna.layout = (function() {
             initIpadCheck();
             initLoginRedirect();
             initLoadMasonry();
+            initPreventModalClose();
         }
     };
 

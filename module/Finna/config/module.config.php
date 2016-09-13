@@ -412,7 +412,8 @@ $recordRoutes = [
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
-    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]']
+    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
+    'MyResearch' => ['sortList' => 'SortList/[:id]'],
 ];
 
 $staticRoutes = [

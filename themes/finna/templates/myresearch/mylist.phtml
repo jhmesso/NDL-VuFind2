@@ -72,6 +72,9 @@
     <? if ($recordTotal > 0): ?>
       <div class="search-controls row">
         <div class="col-sm-7 col-sm-push-5 col-md-8 col-md-push-4 text-right hidden-print">
+          <? if (isset($list)): ?>
+          <a class="btn btn-primary" href="<?=$this->url('sortList', ['id' => $list->id]) ?>" data-lightbox><?=$this->transEsc('Sort manually');?></a>
+          <? endif; ?>
           <?=$this->render('search/controls/sort.phtml')?>
           <?=$this->render('search/controls/limit.phtml')?>
         </div>

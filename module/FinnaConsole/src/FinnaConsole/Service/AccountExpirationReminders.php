@@ -158,8 +158,6 @@ class AccountExpirationReminders extends AbstractService
             $timePeriods .= "finna_last_login <= '" . $remindingDaysEnd[$i] . "')"; 
         }
 
-        $this->msg($timePeriods);
-
         return $this->table->select(
             function (Select $select) use ($timePeriods) {
                 $select->where->notLike('username', 'deleted:%'); 
@@ -195,8 +193,9 @@ class AccountExpirationReminders extends AbstractService
         /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
         $params = [
             'library' => $this->currentSiteConfig['Site']['title'],
-            'username' => $user->username,
-            'name' => $user->username,
+            'username' => substr($user->username,1),
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
             'email' => $user->email,
             'lastLogin' => (new DateTime($user->finna_last_login))->format('d.m.Y H:i:s'),
             'expireDate' =>  $expiration_datetime->format('d.m.Y H:i:s')

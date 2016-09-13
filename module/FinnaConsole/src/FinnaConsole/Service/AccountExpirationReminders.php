@@ -48,7 +48,6 @@ use DateInterval;
 class AccountExpirationReminders extends AbstractService
 {
 
-
     /**
      * View renderer
      *
@@ -212,7 +211,7 @@ class AccountExpirationReminders extends AbstractService
         $resolver->attach($stack);
 
         /* TODO: Kieliversiot */
-        $subject = "Käyttäjätunnuksesi palvelussa " . $params['library'] . " vanhentuu " . $expiration_datetime->format('d.m.Y');; 
+        $subject = "Käyttäjätunnuksesi palvelussa " . $params['library'] . " vanhentuu " . $expiration_datetime->format('d.m.Y');
         $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
 
         try {

@@ -190,7 +190,7 @@ class AccountExpirationReminders extends AbstractService
         if (!$user->email || trim($user->email) == '') {
             $this->msg(
                 "User {$user->username} (id {$user->id})"
-                . ' does not have an email address, bypassing due date reminders'
+                . ' does not have an email address, bypassing expiration reminders'
             );
             return false;
         }

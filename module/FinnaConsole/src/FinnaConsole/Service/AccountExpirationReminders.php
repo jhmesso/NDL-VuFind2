@@ -26,11 +26,14 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
+
 namespace FinnaConsole\Service;
 use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
+use DateTime;
+use DateInterval;
 
 /**
  * Console service for reminding users x days before account expiration
@@ -101,16 +104,19 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
+        $expiration_days = $arguments[0];
+        $remind_days_before = $arguments[1];
+        $frequency = $arguments[2];
+
         $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
-        /* vai if (!$path = $this->resolveViewPath($institution, $view)) { ScheduledAlerts.php:stä */
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
-        $users = $this->getUsersToRemind($arguments[0],$arguments[1],$arguments[2]);
+        $users = $this->getUsersToRemind($expiration_days,$remind_days_before,$frequency);
         $count = 0;
 
         foreach ($users as $user) {
             $this->msg("Sending expiration reminder for user " . $user->username);
-            $this->sendAccountExpirationReminder($user);
+            $this->sendAccountExpirationReminder($user,$expiration_days);
             $count++;
         }
 
@@ -134,19 +140,13 @@ class AccountExpirationReminders extends AbstractService
      */
     protected function getUsersToRemind($days,$remindDaysBefore,$frequency)
     {
-
         $remindingDaysBegin = array();
         $remindingDaysEnd = array();
 
         for ($x = $remindDaysBefore; $x > 0; $x -= $frequency) {
-            $remindingDaysBegin[] = date('Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days + $x)));
-            $remindingDaysEnd[] = date('Y-m-d 23:59:59', strtotime(sprintf('-%d days', (int) $days + $x)));
+            $remindingDaysBegin[] = date('Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days - $x)));
+            $remindingDaysEnd[] = date('Y-m-d 23:59:59', strtotime(sprintf('-%d days', (int) $days - $x)));
         }
-
-        /* For testing: 
-          $remindingDaysBegin[] = date('2015-09-01 00:00:00');
-          $remindingDaysEnd[] = date('2015-09-31 23:59:59');
-        */
       
         $timePeriods = "";
 
@@ -155,8 +155,10 @@ class AccountExpirationReminders extends AbstractService
                 $timePeriods .= " OR ";
             }
             $timePeriods .= "(finna_last_login >= '" . $remindingDaysBegin[$i] . "' AND ";
-            $timePeriods .= "finna_last_login <= '" . $remindingDaysBegin[$i] . "')"; 
+            $timePeriods .= "finna_last_login <= '" . $remindingDaysEnd[$i] . "')"; 
         }
+
+        $this->msg($timePeriods);
 
         return $this->table->select(
             function (Select $select) use ($timePeriods) {
@@ -171,13 +173,13 @@ class AccountExpirationReminders extends AbstractService
     }
 
     /**
-     * Send account expiration reminders for a user.
+     * Send account expiration reminder for a user.
      *
      * @param \Finna\Db\Table\Row\User $user        User.
      *
      * @return boolean success.
      */
-    protected function sendAccountExpirationReminder($user)
+    protected function sendAccountExpirationReminder($user,$expiration_days)
     {
         if (!$user->email || trim($user->email) == '') {
             $this->msg(
@@ -187,14 +189,22 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
+        $expiration_date = new DateTime($user->finna_last_login);
+        $expiration_datetime = new DateTime($user->finna_last_login);
+        $expiration_date->add(new DateInterval('P' . $expiration_days . 'D'));
+        $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));
+
+        /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
         $params = [
-            'library' => 'Palvelun_nimi',
+            'library' => $this->currentSiteConfig['Site']['title'],
             'username' => $user->username,
             'name' => $user->username,
-            'email' => $user->email
+            'email' => $user->email,
+            'lastLogin' => (new DateTime($user->finna_last_login))->format('d.m.Y H:i:s'),
+            'expireDate' =>  $expiration_datetime->format('d.m.Y H:i:s')
         ];
 
-        /* TODO: Millä selvitetään asennuksen juuri fiksummin */
+        /* TODO: Millä selvitetään asennuksen juurihakemisto fiksummin */
         $templateDirs = [
             getenv('VUFIND_LOCAL_DIR') . "/../themes/finna/templates",
         ];
@@ -205,17 +215,12 @@ class AccountExpirationReminders extends AbstractService
         $resolver->attach($stack);
 
         /* TODO: Kieliversiot */
-        $subject = "Käyttäjätunnuksesi vanhenee"; 
+        $subject = "Käyttäjätunnuksesi palvelussa " . $params['library'] . " vanhentuu " . $expiration_date->format('d.m.Y');; 
         $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
 
         try {
             $to = $user->email;
             $from = $this->currentSiteConfig['Site']['email'];
-
-            /*
-            $this->msg("SUBJ: $subject");
-            $this->msg("MSG: $message");
-            */
 
             $this->serviceManager->get('VuFind\Mailer')->send(
                 $to, $from, $subject, $message
@@ -229,8 +234,10 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        /* Tänne ehkä myös lokitiedon kirjoitus kantaan lähetetyistä viesteistä */
+        /* TODO: Tänne ehkä myös lokitiedon kirjoitus kantaan lähetetyistä viesteistä */
 
         return true;
     }
+
+
 }

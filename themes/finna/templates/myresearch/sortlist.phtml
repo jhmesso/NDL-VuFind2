@@ -4,20 +4,55 @@
 ?>
 
 <h2><?=$this->transEsc('Sort manually');?></h2>
-<form action="tallennus" id="sort-favorite-list">
+<!-- <form action="tallennus" id="sort-favorite-list"> -->
   <div class="row">
     <div class="col-xs-12">
-      <button type="submit" value="save_order" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
+      <button type="button" id="save_order" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
       <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
     </div>
   </div>
   <ol id="sortable" class="sortable-favorite-list">
     <? foreach ($this->results->getResults() as $i=>$current): ?>
-      <li><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
+      <li id="<?=$current->getUniqueID() ?>"><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
     <? endforeach; ?>
   </ol>
-</form>
+<!-- </form> -->
 
 <script>
 $('#sortable').sortable({cursor: "move",opacity: 0.7});
+
+/* Voidaan tallettaa järjestys myös automaattisesti jokaisen siirron jälkeen
+$(function () {
+   $("#sortable").sortable({
+      items: 'li',
+         stop: function() {
+            var listOfItems = $('#sortable').sortable('toArray').toString();
+
+            $.ajax({
+               type: "POST",
+               url: "/app/saveSortListOrder",
+               data: "sortList=" + listOfItems,
+               dataType: "json"
+           });
+        }
+    });
+});
+*/
+
+
+$("#save_order").click( function() {
+    var listOfItems = $('#sortable').sortable('toArray').toString();
+    
+    console.log("LIST: " + listOfItems);
+    
+    $.ajax({
+       type: "POST",
+       url: "/app/saveSortListOrder",
+       data: "sortList=" + listOfItems,
+       dataType: "json"
+    });
+    
+    location.reload();
+});
+
 </script>

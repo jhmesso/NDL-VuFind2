@@ -1,0 +1,39 @@
+<!-- START of: finna - search/streetsearch.phtml -->
+<?
+    $terminateButton = '<button id="street-search-terminate">' . $this->transEsc('Abort') . '</button>';
+    $infoText = '<div class="info"></div>';
+    $infoArea = '<div>' . $infoText . $terminateButton . '</div>';
+    $infoBox = '<div class="infoBox">' . $infoArea . '</div>';
+    $spinnerContainer = '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div>' . $infoBox . '</div>';
+    $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
+    $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
+
+    /* TODO: Mikä määrää, että JS tulee ladatuksi sivun templateen */
+    $streetJS = '<script type="text/javascript" src="/vufind2/themes/finna/js/finna-street-search.js"></script>';
+   
+
+    $this->layout()->searchbox = $searchButtonArea . $streetJS;
+    
+    $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');
+   
+    $this->jsTranslations()->addStrings(
+      array(
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
+        'street_search_geolocation_available' => 'street_search_geolocation_available',
+        'street_search_other_error' => 'street_search_other_error',
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_timeout' => 'street_search_timeout',
+        'street_search_no_streetname_found' => 'street_search_no_streetname_found',
+        'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
+        'street_search_searching_for' => 'street_search_searching_for',
+        'street_search_coordinates_found' => 'street_search_coordinates_found',
+        'Abort' => 'Abort'
+      )
+    );
+
+
+      
+?>
+
+<!-- END of: finna - search/streetsearch.phtml -->

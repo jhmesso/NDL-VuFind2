@@ -41,18 +41,25 @@ $(function () {
 
 
 $("#save_order").click( function() {
+    var regexp = /\/([0-9]+)\?/g;
+    var listID = (regexp.exec($(location).attr("href")))[1];
     var listOfItems = $('#sortable').sortable('toArray').toString();
-    
-    console.log("LIST: " + listOfItems);
-    
+
+
     $.ajax({
        type: "POST",
-       url: "/app/saveSortListOrder",
-       data: "sortList=" + listOfItems,
-       dataType: "json"
+       url: "/vufind2/Cart/MyResearchBulk",
+       data: { 'orderedList' :  listOfItems,
+               'saveOwnFavoritesOrder' : '1',
+               'listID' : listID
+             }
     });
+
     
-    location.reload();
+    /* TODO: Tänne parametriksi, että ladattu sivu järjestetään omaan järjestykseen 
+             (esim.  &sort=own)
+    */
+    location.reload(); 
 });
 
 </script>

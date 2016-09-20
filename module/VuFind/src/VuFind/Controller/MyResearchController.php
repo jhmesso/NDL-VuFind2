@@ -414,6 +414,37 @@ class MyResearchController extends AbstractBase
     }
 
     /**
+     * Save sort order to the DB of the items in user's own favorite lists
+     *
+     * @return boolean
+     */
+
+    public function saveOwnFavoritesOrderAction()
+    {
+        // Force login:
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        $listID = $this->params()->fromPost('listID');
+        $orderedList = $this->params()->fromPost('orderedList');
+
+        if (empty($listID)) {
+            throw new \Exception('Cannot save order without listID!');
+        }
+
+        // $this->saveOwnFavoritesOrder($user, $listID, $orderedList);
+
+        // $table = $this->getTable('finna_favorite_order');
+        // $list = $table->getExisting($listID);
+        // $list->removeResourcesById($user, [$id], $source);
+
+        return true;
+    }
+
+    
+    /**
      * Delete group of records from favorites.
      *
      * @return mixed
@@ -506,6 +537,8 @@ class MyResearchController extends AbstractBase
         return true;
     }
 
+
+    
     /**
      * Process the submission of the edit favorite form.
      *
@@ -766,6 +799,7 @@ class MyResearchController extends AbstractBase
             }
         }
     }
+
 
     /**
      * Send user's saved favorites from a particular list to the edit view

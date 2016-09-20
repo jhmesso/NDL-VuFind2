@@ -416,7 +416,7 @@ class MyResearchController extends AbstractBase
     /**
      * Save sort order to the DB of the items in user's own favorite lists
      *
-     * @return boolean
+     * @return mixed
      */
 
     public function saveOwnFavoritesOrderAction()

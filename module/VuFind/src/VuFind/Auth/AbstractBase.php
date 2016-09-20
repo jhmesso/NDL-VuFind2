@@ -308,6 +308,16 @@ abstract class AbstractBase implements \VuFind\Db\Table\DbTableAwareInterface,
     }
 
     /**
+     * Get access to the finna_favorite_order table.
+     *
+     * @return \VuFind\Db\Table\FinnaFavoriteOrder
+     */
+    public function getFinnaFavoriteOrderTable()
+    {
+        return $this->getDbTableManager()->get('Finna_favorite_order');
+    }
+
+    /**
      * Get access to the user table.
      *
      * @return \VuFind\Db\Table\User

@@ -434,12 +434,6 @@ class MyResearchController extends AbstractBase
             throw new \Exception('Cannot save order without listID!');
         }
 
-        $param = [
-            'user_id' => $user->id,
-            'list_id' => $listID,
-            'resource_list' => $orderedList
-        ];
-
         $table = $this->getTable('FavoriteOrder');
         $table->saveFavoriteOrder($user->id,$listID,$orderedList);
 

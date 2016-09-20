@@ -21,7 +21,7 @@
  *
  * @category VuFind
  * @package  Db_Table
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -32,7 +32,7 @@ namespace Finna\Db\Table;
  *
  * @category VuFind
  * @package  Db_Table
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -59,7 +59,7 @@ class FavoriteOrder extends \VuFind\Db\Table\Gateway
      */
     public function saveFavoriteOrder($user_id,$list_id,$resource_list)
     {
-        if ($this->select(['user_id' => $user_id, 'list_id' => $list_id])) {
+        if ($this->select(['user_id' => $user_id, 'list_id' => $list_id])->current()) {
             $this->update(['resource_list' => "$resource_list"], "user_id = $user_id and list_id = $list_id");
         } else {
             $result = $this->createRow();

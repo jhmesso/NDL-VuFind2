@@ -41,7 +41,7 @@ $(function () {
 
 
 $("#save_order").click( function() {
-    var regexp = /\/([0-9]+)\?/g;
+    var regexp = /\/([0-9]+)[?#]/g;
     var listID = (regexp.exec($(location).attr("href")))[1];
     var listOfItems = $('#sortable').sortable('toArray').toString();
 

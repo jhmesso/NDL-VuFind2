@@ -28,9 +28,6 @@
  */
 namespace Finna\Controller;
 
-use VuFind\Exception\Forbidden as ForbiddenException;
-use VuFind\Exception\ListPermission as ListPermissionException;
-
 /**
  * Controller for the user account area.
  *
@@ -518,7 +515,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * @return array
      */
     public static function getFavoritesSortList()
-    {            
+    {
         return [
             'own_ordering' => 'sort_own_order',
             'id desc' => 'sort_saved',

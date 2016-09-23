@@ -534,8 +534,6 @@ class MyResearchController extends AbstractBase
         return true;
     }
 
-
-    
     /**
      * Process the submission of the edit favorite form.
      *
@@ -796,7 +794,6 @@ class MyResearchController extends AbstractBase
             }
         }
     }
-
 
     /**
      * Send user's saved favorites from a particular list to the edit view

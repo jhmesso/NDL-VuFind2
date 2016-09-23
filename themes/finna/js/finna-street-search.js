@@ -1,5 +1,6 @@
 finna.StreetSearch = (function() {
     var ssButton, terminateButton, spinner, spinnerContainer, getPositionSuccess, xhr;
+    var geolocationAccuracyTreshold = 100; // If value is bigger then getting geolocation failed because of bad accuracy
     
     var doStreetSearch = function() {
         spinnerContainer.show();
@@ -51,35 +52,39 @@ finna.StreetSearch = (function() {
 
     var reverseGeocode = function(position) {
         getPositionSuccess = true;
+	
+        if (position.coords.accuracy > geolocationAccuracyTreshold) {
+            ssInfo(VuFind.translate('street_search_no_streetname_found'), 'stopped');
+        } else {
+            ssInfo(VuFind.translate('street_search_coordinates_found'), 'continues');
 
-        ssInfo(VuFind.translate('street_search_coordinates_found'), 'continues');
+            reverseGeocodeService = 'https://api.digitransit.fi/geocoding/v1/reverse';
 
-        reverseGeocodeService = 'https://api.digitransit.fi/geocoding/v1/reverse';
+            queryParameters = {
+		'point.lat' : position.coords.latitude,
+		'point.lon' : position.coords.longitude,
+		'size' : '1'
+            };
 
-        queryParameters = {
-            'point.lat' : position.coords.latitude,
-            'point.lon' : position.coords.longitude,
-            'size' : '1'
-        };
-        
-        url = reverseGeocodeService + '?' + $.param(queryParameters);
+            url = reverseGeocodeService + '?' + $.param(queryParameters);
 
-        xhr = $.ajax({
+            xhr = $.ajax({
                 method: "GET",
                 dataType: "json",
                 url: url
-        })
-        .done(function(data) {
-            if (data.features[0] && (street = data.features[0].properties.street) &&
-               (city = data.features[0].properties.locality)) {
-                buildSearch(street, city);
-            } else {
-                ssInfo(VuFind.translate('street_search_no_streetname_found'), 'stopped');
-            }
-        })
-        .fail(function() {
-            ssInfo(VuFind.translate('street_search_reversegeocode_unavailable'), 'stopped');          
-        });      
+            })
+		.done(function(data) {
+		    if (data.features[0] && (street = data.features[0].properties.street) &&
+			(city = data.features[0].properties.locality)) {
+			buildSearch(street, city);
+		    } else {
+			ssInfo(VuFind.translate('street_search_no_streetname_found'), 'stopped');
+		    }
+		})
+		.fail(function() {
+		    ssInfo(VuFind.translate('street_search_reversegeocode_unavailable'), 'stopped');          
+		});
+	}
     }
  
     var buildSearch = function(street, city) {

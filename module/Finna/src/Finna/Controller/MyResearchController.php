@@ -215,7 +215,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $view;
         }
 
-        $view->sortList = $this->createSortList();
+        $view->sortList = $this->createSortList($list); 
 
         return $view;
     }
@@ -518,14 +518,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * @return array
      */
     public static function getFavoritesSortList()
-    {
+    {            
         return [
+            'own_ordering' => 'sort_own_order',
             'id desc' => 'sort_saved',
             'title' => 'sort_title',
             'author' => 'sort_author',
             'year' => 'sort_year asc',
             'format' => 'sort_format',
         ];
+
     }
 
     /**
@@ -703,9 +705,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return array
      */
-    protected function createSortList()
+    protected function createSortList($list)
     {
         $sortOptions = self::getFavoritesSortList();
+        if (! $list) {
+            unset($sortOptions['own_ordering']);
+        }
         $sort = isset($_GET['sort']) ? $_GET['sort'] : false;
         if (!$sort) {
             reset($sortOptions);

@@ -10,6 +10,9 @@
       <button type="button" id="save_order" value="save_order" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
       <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
     </div>
+    <div id="error-message" class="col-xs-12" style="display: none;">
+        <?=$this->transEsc('Saving own order failed');?>
+    </div>
   </div>
   <ol id="sortable" class="sortable-favorite-list">
     <? foreach ($this->results->getResults() as $i=>$current): ?>
@@ -27,12 +30,7 @@ $("#save_order").click( function() {
     var listID = (regexp.exec($(location).attr("href")))[1];
     var listOfItems = $('#sortable').sortable('toArray').toString();
 
-    $.when(ajaxConnection(userID,listID,listOfItems)).done(function() {
-        location.reload();
-    });
-});
 
-function ajaxConnection (userID,listID,listOfItems) {
     if (userID > 0 && listID > 0 && listOfItems.length > 0) {
         $.ajax({
             type: "POST",
@@ -42,8 +40,17 @@ function ajaxConnection (userID,listID,listOfItems) {
                     'userID' : userID,
                     'listID' : listID,
                   }
-        });
+            })
+            .done(function() {
+		location.reload();
+	    })
+	    .fail(function() {
+		$('#error-message').show();
+	    });
+    } else {
+	$('#error-message').show();
     }
-}
+});
+
 
 </script>

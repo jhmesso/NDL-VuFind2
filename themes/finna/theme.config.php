@@ -12,8 +12,8 @@ return array(
             'feed' => 'Finna\View\Helper\Root\Factory::getFeed',
             'fileSrc' => 'Finna\View\Helper\Root\Factory::getFileSrc',
             'header' => 'Finna\View\Helper\Root\Factory::getHeader',
-            'headLink' => 'FinnaTheme\View\Helper\Factory::getHeadLink',
-            'headScript' => 'FinnaTheme\View\Helper\Factory::getHeadScript',
+            'headLink' => 'Finna\View\Helper\Root\Factory::getHeadLink',
+            'headScript' => 'Finna\View\Helper\Root\Factory::getHeadScript',
             'headTitle' => 'Finna\View\Helper\Root\Factory::getHeadTitle',
             'holdingsSettings' => 'Finna\View\Helper\Root\Factory::getHoldingsSettings',
             'imageSrc' => 'Finna\View\Helper\Root\Factory::getImageSrc',
@@ -36,11 +36,13 @@ return array(
             'searchbox' => 'Finna\View\Helper\Root\Factory::getSearchBox',
             'searchTabs' => 'Finna\View\Helper\Root\Factory::getSearchTabs',
             'searchTabsRecommendations' => 'Finna\View\Helper\Root\Factory::getSearchTabsRecommendations',
+            'streetSearch' => 'Finna\View\Helper\Root\Factory::getStreetSearch',
             'systemMessages' => 'Finna\View\Helper\Root\Factory::getSystemMessages',
             'translation' => 'Finna\View\Helper\Root\Factory::getTranslation',
             'proxyurl' => 'Finna\View\Helper\Root\Factory::getProxyUrl',
         ),
         'invokables' => array(
+            'body' => 'Finna\View\Helper\Root\Body',
             'checkboxFacetCounts' =>
                 'Finna\View\Helper\Root\CheckboxFacetCounts',
             'resultfeed' => 'Finna\View\Helper\Root\ResultFeed',
@@ -79,8 +81,7 @@ return array(
         'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/slick.min.js',
         'vendor/jquery.touchSwipe.min.js',
-        'vendor/bootstrap-multiselect.min.js',
-        'vendor/gauge.min.js'
+        'vendor/bootstrap-multiselect.min.js'
     ),
     'less' => array(
         'active' => false

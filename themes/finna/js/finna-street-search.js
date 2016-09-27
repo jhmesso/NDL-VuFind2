@@ -55,7 +55,7 @@ finna.StreetSearch = (function() {
     var reverseGeocode = function(position) {
         getPositionSuccess = true;
 	
-        if (position.coords.accuracy > geolocationAccuracyTreshold) {
+        if (position.coords.accuracy >= geolocationAccuracyTreshold) {
             ssInfo(VuFind.translate('street_search_coordinates_found_accuracy_bad'), 'continues');
         } else {
             ssInfo(VuFind.translate('street_search_coordinates_found'), 'continues');

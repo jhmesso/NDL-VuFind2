@@ -12,7 +12,7 @@ return array(
             'feed' => 'Finna\View\Helper\Root\Factory::getFeed',
             'fileSrc' => 'Finna\View\Helper\Root\Factory::getFileSrc',
             'header' => 'Finna\View\Helper\Root\Factory::getHeader',
-            'headLink' => 'FinnaTheme\View\Helper\Factory::getHeadLink',
+	    'headLink' => 'FinnaTheme\View\Helper\Factory::getHeadLink',
             'headScript' => 'FinnaTheme\View\Helper\Factory::getHeadScript',
             'headTitle' => 'Finna\View\Helper\Root\Factory::getHeadTitle',
             'holdingsSettings' => 'Finna\View\Helper\Root\Factory::getHoldingsSettings',
@@ -42,6 +42,7 @@ return array(
             'proxyurl' => 'Finna\View\Helper\Root\Factory::getProxyUrl',
         ),
         'invokables' => array(
+	    'body' => 'Finna\View\Helper\Root\Body',
             'checkboxFacetCounts' =>
                 'Finna\View\Helper\Root\CheckboxFacetCounts',
             'resultfeed' => 'Finna\View\Helper\Root\ResultFeed',

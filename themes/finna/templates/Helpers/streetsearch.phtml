@@ -1,19 +1,8 @@
-<!-- START of: finna - search/streetsearch.phtml -->
-<?
-    $this->headScript()->appendFile('finna-street-search.js'); /* TODO: Miksi tämä ei toimi? */
+<!-- START of: finna - Helpers/streetsearch.phtml -->
 
-    $terminateButton = '<button id="street-search-terminate">' . $this->transEsc('Abort') . '</button>';
-    $infoText = '<div class="info"></div>';
-    $infoArea = '<div>' . $infoText . $terminateButton . '</div>';
-    $infoBox = '<div class="infoBox">' . $infoArea . '</div>';
-    $spinnerContainer = '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div>' . $infoBox . '</div>';
-    $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
-    $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
-
-    $streetJS = '<script type="text/javascript" src="/vufind2/themes/finna/js/finna-street-search.js"></script>'; 
-
-    $this->layout()->searchbox = $searchButtonArea . $streetJS;
     
+<?
+
     $this->jsTranslations()->addStrings(
       array(
         'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
@@ -30,8 +19,22 @@
       )
     );
 
+    $this->headScript()->appendFile("finna-street-search.js");
 
-      
+    $streetJS = '<script type="text/javascript" src="/vufind2/themes/finna/js/finna-street-search.js"></script>';
+    $streetJS .= '<script>VuFind.addTranslations(' . $this->jsTranslations()->getJSON()  . ');';
+    $streetJS .= '</script>';
+
+    $terminateButton = '<button id="street-search-terminate">' . $this->transEsc('Abort') . '</button>';
+    $infoText = '<div class="info"></div>';
+    $infoArea = '<div>' . $infoText . $terminateButton . '</div>';
+    $infoBox = '<div class="infoBox">' . $infoArea . '</div>';
+    $spinnerContainer = '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div>' . $infoBox . '</div>';
+    $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
+    $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
+
+    $this->layout()->searchbox = $searchButtonArea . $streetJS;
+
 ?>
 
-<!-- END of: finna - search/streetsearch.phtml -->
+<!-- END of: finna - Helpers/streetsearch.phtml -->

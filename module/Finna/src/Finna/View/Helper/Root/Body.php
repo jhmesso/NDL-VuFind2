@@ -1,11 +1,10 @@
 <?php
-
 /**
- * Helper to check if current user is authenticated with Mozilla Persona
+ * HTML body view helper
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,52 +21,63 @@
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
+ * @author   Timo Laine <timo.mz.laine@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\View\Helper\Root;
 
 /**
- * Helper to check if current user is authenticated with Mozilla Persona
+ * HTML body view helper
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
+ * @author   Timo Laine <timo.mz.laine@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class StreetSearch extends \Zend\View\Helper\AbstractHelper
+class Body extends \Zend\View\Helper\AbstractHelper
 {
+  
     /**
-     * Configuration
+     * HTML body classes
      *
-     * @var \Zend\Config\Config
+     * @var array
      */
-    
-    protected $config;
-
-        protected $serviceLocator;
-
+    protected $classes;
+  
     /**
      * Constructor
-     *
-     * @param type $serviceLocator Service locator
      */
-    public function __construct($serviceLocator)
+    public function __construct()
     {
-        $this->serviceLocator = $serviceLocator;
-        $this->config = $this->serviceLocator->get('VuFind\Config')->get('config');
-    }
-
+        $this->classes = [];
+    }  
+  
     /**
-     * This component outputs code Finna Street launch button
+     * Appends a class to HTML body
      *
-     * @return null|string 
+     * @param string $class   Class to add
+     *
+     * @return array
      */
-    public function renderStreetSearchButton()
+    public function appendClass($class)
     {
-        return $this->getView()->render('Helpers/streetsearch.phtml');
+        if (!in_array($class, $this->classes)) {
+            $this->classes[] = $class;
+        }
+        
+        return $this->classes;
+    }
+    
+    /**
+     * Returns HTML body classes
+     *
+     * @return array
+     */
+    public function getClasses()
+    {
+        return $this->classes;
     }
 
 }

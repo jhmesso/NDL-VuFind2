@@ -47,17 +47,14 @@ class StreetSearch extends \Zend\View\Helper\AbstractHelper
     
     protected $config;
 
-        protected $serviceLocator;
-
     /**
      * Constructor
      *
      * @param type $serviceLocator Service locator
      */
-    public function __construct($serviceLocator)
+    public function __construct(\Zend\Config\Config $config)
     {
-        $this->serviceLocator = $serviceLocator;
-        $this->config = $this->serviceLocator->get('VuFind\Config')->get('config');
+        $this->config = $config;
     }
 
     /**

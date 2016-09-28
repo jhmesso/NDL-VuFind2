@@ -10,7 +10,7 @@
             '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
             '<button id="street-search-terminate">' . $this->transEsc('street_search_abort') . '</button></div></div></div></div>';
 
-    $this->layout()->searchbox = $html;
+    $this->layout()->content = $html;
        
     $this->jsTranslations()->addStrings(
       array(

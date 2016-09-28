@@ -4,20 +4,15 @@
     $this->content()->setHeading = false;
     $this->layout()->finnaMainHeader = false;
     $this->body()->appendClass('streetsearch');
-
-    $introText = '<div class="introduction"><h1 class="introductionText">' . $this->translate('street_search_header') . '</h1></div>';
-    $terminateButton = '<button id="street-search-terminate">' . $this->transEsc('Abort') . '</button>';
-    $infoText = '<div class="info"></div>';
-    $infoArea = '<div>' . $infoText . $terminateButton . '</div>';
-    $infoBox = '<div class="infoBox">' . $infoArea . '</div>';
-    $spinnerContainer = '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div>' . $infoBox . '</div>';
-    $searchButton = '<button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>';
-    $searchButtonArea = '<div id="street-search-button-area">' . $searchButton . $spinnerContainer . '</div>';
-
-    $this->layout()->searchbox = $introText . $searchButtonArea;
-    
     $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');
-   
+
+    $html = '<div class="introduction"><h1 class="introductionText"><span>' . $this->translate('street_search_header') . '</h1></div>' .
+            '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' .
+            '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
+            '<button id="street-search-terminate">' . $this->transEsc('street-search-abort') . '</button></div></div></div></div>';
+
+    $this->layout()->searchbox = $html;
+       
     $this->jsTranslations()->addStrings(
       array(
         'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
@@ -30,11 +25,12 @@
         'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
         'street_search_searching_for' => 'street_search_searching_for',
         'street_search_coordinates_found' => 'street_search_coordinates_found',
-        'Abort' => 'Abort'
+        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad',
+        'street_search_abort' => 'street_search_abort'
       )
     );
-      
 ?>
+
 <div class="row">
  <div class="col-md-10 col-lg-8">
    <ul id="street-search-output"></ul>

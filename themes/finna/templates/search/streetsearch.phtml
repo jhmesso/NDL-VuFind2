@@ -8,7 +8,7 @@
     $html = '<div class="introduction"><h1 class="introductionText"><span>' . $this->translate('street_search_header') . '</h1></div>' .
             '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' .
             '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
-            '<button id="street-search-terminate">' . $this->transEsc('street-search-abort') . '</button></div></div></div></div>';
+            '<button id="street-search-terminate">' . $this->transEsc('street_search_abort') . '</button></div></div></div></div>';
 
     $this->layout()->searchbox = $html;
        
@@ -24,8 +24,7 @@
         'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
         'street_search_searching_for' => 'street_search_searching_for',
         'street_search_coordinates_found' => 'street_search_coordinates_found',
-        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad',
-        'street_search_abort' => 'street_search_abort'
+        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
       )
     );
 ?>

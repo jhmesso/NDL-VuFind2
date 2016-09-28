@@ -108,9 +108,9 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     public static function getHeadScript(ServiceManager $sm)
     {
         $locator = $sm->getServiceLocator();
-	return new HeadScript(
+    return new HeadScript(
             $locator->get('VuFindTheme\ThemeInfo'),
-    	    \VuFindTheme\View\Helper\Factory::getPipelineConfig($sm), 
+            \VuFindTheme\View\Helper\Factory::getPipelineConfig($sm), 
             $locator->get('Request')
         );
     }

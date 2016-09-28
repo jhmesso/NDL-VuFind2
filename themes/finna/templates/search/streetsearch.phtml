@@ -5,7 +5,7 @@
     $this->layout()->finnaMainHeader = false;
     $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');
 
-    $html = '<div class="introduction"><h1 class="introductionText"><span>' . $this->translate('street_search_header') . '</h1></div>' .
+    $html = '<div class="introduction"><h1 class="introductionText"><span>' . $this->translate('street_search_header_html') . '</h1></div>' .
             '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' .
             '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
             '<button id="street-search-terminate">' . $this->transEsc('street_search_abort') . '</button></div></div></div></div>';
@@ -33,7 +33,7 @@
  <div class="col-md-10 col-lg-8">
    <ul id="street-search-output"></ul>
    <p>
-     <?=$this->translate('street_search_info')?>
+     <?=$this->translate('street_search_info_html')?>
    </p>
  </div>
 </div>

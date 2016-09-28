@@ -19,7 +19,6 @@ finna.StreetSearch = (function() {
         } else {
             geoLocationError();
         }
-
     }
 
     var terminateStreetSearch = function() {
@@ -61,12 +60,10 @@ finna.StreetSearch = (function() {
             ssInfo(VuFind.translate('street_search_coordinates_found'), 'continues');
 	}
 
-
-
-        queryParameters = {
-	    'point.lat' : position.coords.latitude,
-	    'point.lon' : position.coords.longitude,
-	    'size' : '1'
+	queryParameters = {
+	    'point.lat': position.coords.latitude,
+	    'point.lon': position.coords.longitude,
+	    'size': '1'
         };
 	
         url = reverseGeocodeService + '?' + $.param(queryParameters);
@@ -97,11 +94,11 @@ finna.StreetSearch = (function() {
             resultsUrl = (VuFind.path.match(/vufind/)) ? "https://finna.fi/Search/Results" : VuFind.path + '/Search/Results';
             
             queryParameters = {
-                'lookfor' : street + ' ' + city,
-                'type' : 'AllFields',
-                'limit' : '100',
-                'view' : 'grid',
-                'filter' : [
+                'lookfor': street + ' ' + city,
+                'type': 'AllFields',
+                'limit': '100',
+                'view': 'grid',
+                'filter': [
                     '~format:"0/Image/"',
                     '~format:"0/Place/"',
                     'online_boolean:"1"'
@@ -109,7 +106,6 @@ finna.StreetSearch = (function() {
             };
         
             url = resultsUrl + '?' + $.param(queryParameters);
-            
             window.location.href = url;
         }
     }

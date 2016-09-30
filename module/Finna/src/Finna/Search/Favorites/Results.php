@@ -52,8 +52,6 @@ class Results extends \VuFind\Search\Favorites\Results
 
         $sort = $this->getParams()->getSort();
 
-        syslog(LOG_INFO, "SORT: " . $sort);
-        
         // Other sort options are handled in the database, but format is language-
         // specific
         if ($sort === 'format') {
@@ -69,7 +67,6 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->results = array_values($records);
 
         } elseif ($sort === "own_ordering") {
-
             $authManager = $this->serviceLocator->get('VuFind\AuthManager');
             $user = $authManager->isLoggedIn();
 
@@ -79,7 +76,6 @@ class Results extends \VuFind\Search\Favorites\Results
 
             $table = $this->getTable('FavoriteOrder');
 
-            syslog(LOG_INFO,"USER: " .  $user->id . "/" . $list_id);
             if ($orderResult = $table->getFavoriteOrder($user->id,$list_id)) {
 
                 $list = preg_split("/,/",$orderResult->resource_list,-1);

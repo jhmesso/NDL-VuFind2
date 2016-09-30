@@ -208,9 +208,6 @@ class CartController extends AbstractBase
             $action = 'Home';
         } else if (strlen($this->params()->fromPost('export', '')) > 0) {
             $action = 'Export';
-        } else if (strlen($this->params()->fromPost('saveOwnFavoritesOrder', '')) > 0) {
-            $controller = 'MyResearch';
-            $action = 'SaveOwnFavoritesOrder';
         } else {
             throw new \Exception('Unrecognized bulk action.');
         }

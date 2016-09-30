@@ -32,7 +32,7 @@ use VuFind\Exception\Auth as AuthException,
     VuFind\Exception\Mail as MailException,
     VuFind\Exception\ListPermission as ListPermissionException,
     VuFind\Exception\RecordMissing as RecordMissingException,
-    VuFind\Search\RecommendListener, Zend\Stdlib\Parameters, Finna\Db\Table\FavoriteOrder;
+    VuFind\Search\RecommendListener, Zend\Stdlib\Parameters;
 
 /**
  * Controller for the user account area.
@@ -413,34 +413,6 @@ class MyResearchController extends AbstractBase
         return $this->forwardTo('MyResearch', 'MyList');
     }
 
-    /**
-     * Save ordering of the items in user's own favorite lists to the DB.
-     *
-     * @return mixed
-     */
-
-    public function saveOwnFavoritesOrderAction()
-    {
-        // Force login:
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->forceLogin();
-        }
-
-        $listID = $this->params()->fromPost('listID');
-        $orderedList = $this->params()->fromPost('orderedList');
-
-        if (empty($listID)) {
-            throw new \Exception('Cannot save order without listID!');
-        }
-
-        $table = $this->getTable('FavoriteOrder');
-        $table->saveFavoriteOrder($user->id,$listID,$orderedList);
-
-        return true;
-    }
-
-    
     /**
      * Delete group of records from favorites.
      *

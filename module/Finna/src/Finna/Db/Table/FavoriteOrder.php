@@ -87,4 +87,13 @@ class FavoriteOrder extends \VuFind\Db\Table\Gateway
         }
     }
 
+    /**
+     * Get access to the finna_favorite_order table.
+     *
+     * @return \VuFind\Db\Table\FinnaFavoriteOrder
+     */
+    public function getFinnaFavoriteOrderTable()
+    {
+        return $this->getDbTableManager()->get('Finna_favorite_order');
+    }
 }

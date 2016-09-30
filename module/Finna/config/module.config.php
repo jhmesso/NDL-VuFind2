@@ -144,6 +144,7 @@ $config = [
     'controllers' => [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
+            'cart' => 'Finna\Controller\Factory::getCartController',
             'record' => 'Finna\Controller\Factory::getRecordController',
         ],
         'invokables' => [
@@ -163,6 +164,7 @@ $config = [
             'metalib' => 'Finna\Controller\MetaLibController',
             'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
             'my-research' => 'Finna\Controller\MyResearchController',
+            'organisationInfo' => 'Finna\Controller\OrganisationInfoController',
             'pci' => 'Finna\Controller\PCIController',
             'primo' => 'Finna\Controller\PrimoController',
             'primorecord' => 'Finna\Controller\PrimorecordController',
@@ -217,7 +219,6 @@ $config = [
             ],
             'db_table' => [
                 'factories' => [
-                    'resource' => 'Finna\Db\Table\Factory::getResource',
                     'user' => 'Finna\Db\Table\Factory::getUser',
                     'userlist' => 'Finna\Db\Table\Factory::getUserList',
                 ],
@@ -227,6 +228,7 @@ $config = [
                     'comments-record' => 'Finna\Db\Table\CommentsRecord',
                     'due-date-reminder' => 'Finna\Db\Table\DueDateReminder',
                     'favorite-order' => 'Finna\Db\Table\FavoriteOrder',
+                    
                     'fee' => 'Finna\Db\Table\Fee',
                     'metalibSearch' => 'Finna\Db\Table\MetaLibSearch',
                     'search' => 'Finna\Db\Table\Search',
@@ -414,13 +416,14 @@ $recordRoutes = [
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
-    'MyResearch' => ['sortList' => 'SortList/[:id]'],
+    'MyResearch' => ['sortList' => 'SortList/[:id]']
 ];
 
 $staticRoutes = [
     'Browse/Database', 'Browse/Journal',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
+    'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record'
 ];
 
@@ -432,16 +435,18 @@ $routeGenerator->addStaticRoutes($config, $staticRoutes);
 // API routes
 $config['router']['routes']['searchApi'] = [
     'type' => 'Zend\Mvc\Router\Http\Literal',
+    'verb' => 'get,post,options',
     'options' => [
         'route'    => '/api/search',
         'defaults' => [
             'controller' => 'SearchApi',
             'action'     => 'search',
         ]
-    ]
+    ],
 ];
 $config['router']['routes']['searchApiv1'] = [
     'type' => 'Zend\Mvc\Router\Http\Literal',
+    'verb' => 'get,post,options',
     'options' => [
         'route'    => '/v1/search',
         'defaults' => [

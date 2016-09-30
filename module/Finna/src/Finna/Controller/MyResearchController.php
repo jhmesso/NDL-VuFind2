@@ -28,6 +28,8 @@
  */
 namespace Finna\Controller;
 
+use Finna\Db\Table\FavoriteOrder;
+
 /**
  * Controller for the user account area.
  *
@@ -925,5 +927,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $profile;
         }
         return null;
+    }
+
+    /**
+     * Save ordering of the items in user's own favorite lists to the DB.
+     *
+     * @return mixed
+     */
+
+    public function saveOwnFavoritesOrderAction()
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        $listID = $this->params()->fromPost('listID');
+        $orderedList = $this->params()->fromPost('orderedList');
+
+        if (empty($listID)) {
+            throw new \Exception('Cannot save order without listID!');
+        }
+
+        $table = $this->getTable('FavoriteOrder');
+        $table->saveFavoriteOrder($user->id,$listID,$orderedList);
+
+        return true;
     }
 }

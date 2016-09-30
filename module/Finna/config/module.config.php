@@ -144,6 +144,7 @@ $config = [
     'controllers' => [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
+            'cart' => 'Finna\Controller\Factory::getCartController',
             'record' => 'Finna\Controller\Factory::getRecordController',
         ],
         'invokables' => [
@@ -226,6 +227,8 @@ $config = [
                     'comments-inappropriate' => 'Finna\Db\Table\CommentsInappropriate',
                     'comments-record' => 'Finna\Db\Table\CommentsRecord',
                     'due-date-reminder' => 'Finna\Db\Table\DueDateReminder',
+                    'favorite-order' => 'Finna\Db\Table\FavoriteOrder',
+                    
                     'fee' => 'Finna\Db\Table\Fee',
                     'metalibSearch' => 'Finna\Db\Table\MetaLibSearch',
                     'search' => 'Finna\Db\Table\Search',
@@ -412,7 +415,8 @@ $recordRoutes = [
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
-    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]']
+    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
+    'MyResearch' => ['sortList' => 'SortList/[:id]']
 ];
 
 $staticRoutes = [

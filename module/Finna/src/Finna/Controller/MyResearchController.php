@@ -28,6 +28,8 @@
  */
 namespace Finna\Controller;
 
+use Finna\Db\Table\FavoriteOrder;
+
 /**
  * Controller for the user account area.
  *
@@ -212,7 +214,51 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $view;
         }
 
-        $view->sortList = $this->createSortList();
+        $view->sortList = $this->createSortList($list); 
+
+        return $view;
+    }
+
+    /**
+     * Show user's own favorite list (max. 1000) to the view
+     *
+     * @return mixed
+     */
+    public function sortListAction()
+    {
+        // Fail if lists are disabled:
+        if (!$this->listsEnabled()) {
+            throw new ForbiddenException('Lists disabled');
+        }
+
+        $listId = $this->params()->fromRoute('id');
+        if (null === $listId) {
+            throw new ListPermissionException('Cannot sort all favorites list');
+        }
+
+        // If we got this far, we just need to display the favorites:
+        try {
+            $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+
+            // We want to merge together GET, POST and route parameters to
+            // initialize our search object:
+            $request = $this->getRequest()->getQuery()->toArray()
+                + $this->getRequest()->getPost()->toArray()
+                + ['id' => $listId];
+
+            $setupCallback = function ($runner, $params, $searchId) {
+                $params->setLimit(1000);
+            };
+            $results = $runner->run($request, 'Favorites', $setupCallback);
+            return $this->createViewModel(
+                ['params' => $results->getParams(), 'results' => $results]
+            );
+        } catch (ListPermissionException $e) {
+            if (!$this->getUser()) {
+                return $this->forceLogin();
+            }
+            throw $e;
+        }
 
         return $view;
     }
@@ -473,13 +519,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public static function getFavoritesSortList()
     {
         return [
+            'own_ordering' => 'sort_own_order',
             'id desc' => 'sort_saved',
-            'id' => 'sort_saved asc',
             'title' => 'sort_title',
             'author' => 'sort_author',
             'year' => 'sort_year asc',
             'format' => 'sort_format',
         ];
+
     }
 
     /**
@@ -606,9 +653,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     {
         $id = $this->params()->fromQuery('id', false);
         $key = $this->params()->fromQuery('key', false);
-        $type = $this->params()->fromQuery('type', 'alert');
+        $type = $this->params()->fromQuery('type', false);
 
-        if ($id === false || $key === false) {
+        if ($id === false || $key === false || $type === false) {
             throw new \Exception('Missing parameters.');
         }
 
@@ -657,9 +704,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return array
      */
-    protected function createSortList()
+    protected function createSortList($list)
     {
         $sortOptions = self::getFavoritesSortList();
+        if (! $list) {
+            unset($sortOptions['own_ordering']);
+        }
         $sort = isset($_GET['sort']) ? $_GET['sort'] : false;
         if (!$sort) {
             reset($sortOptions);
@@ -877,5 +927,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $profile;
         }
         return null;
+    }
+
+    /**
+     * Save ordering of the items in user's own favorite lists to the DB.
+     *
+     * @return mixed
+     */
+
+    public function saveOwnFavoritesOrderAction()
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        $listID = $this->params()->fromPost('listID');
+        $orderedList = $this->params()->fromPost('orderedList');
+
+        if (empty($listID)) {
+            throw new \Exception('Cannot save order without listID!');
+        }
+
+        $table = $this->getTable('FavoriteOrder');
+        $table->saveFavoriteOrder($user->id,$listID,$orderedList);
+
+        return true;
     }
 }

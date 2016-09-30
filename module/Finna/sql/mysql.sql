@@ -136,6 +136,16 @@ CREATE TABLE `finna_metalib_search` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
+CREATE TABLE `finna_favorite_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `list_id` int(11) NOT NULL,
+  `resource_list` text,
+  `saved` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_list` (`user_id`,`list_id`),  CONSTRAINT `finna_favorite_order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

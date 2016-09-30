@@ -27,6 +27,8 @@
  */
 namespace Finna\Search\Favorites;
 
+use Finna\Db\Table\FavoriteOrder;
+
 /**
  * Search Favorites Results
  *
@@ -46,15 +48,9 @@ class Results extends \VuFind\Search\Favorites\Results
      */
     protected function performSearch()
     {
-        $sort = $this->getParams()->getSort();
-        $sortNewestAddedFirst = $sort == 'id desc';
-        if ($sortNewestAddedFirst) {
-            // Set sort option to 'id' (ascending), since we reverse the
-            // results to a descending (newest first) order (see below).
-            $this->getParams()->setSort('id');
-        }
-
         parent::performSearch();
+
+        $sort = $this->getParams()->getSort();
 
         // Other sort options are handled in the database, but format is language-
         // specific
@@ -69,9 +65,33 @@ class Results extends \VuFind\Search\Favorites\Results
             }
             ksort($records);
             $this->results = array_values($records);
-        } else if ($sortNewestAddedFirst) {
-            $this->getParams()->setSort($sort);
-            $this->results = array_reverse($this->results);
+
+        } elseif ($sort === "own_ordering") {
+            $authManager = $this->serviceLocator->get('VuFind\AuthManager');
+            $user = $authManager->isLoggedIn();
+
+            $uri = $_SERVER['REQUEST_URI']; // Mistä listan numeron saisi nätimmin?
+            preg_match('/\/([0-9]+)[?#]/',$uri,$matches);
+            $list_id = $matches[1];
+
+            $table = $this->getTable('FavoriteOrder');
+
+            if ($orderResult = $table->getFavoriteOrder($user->id,$list_id)) {
+
+                $list = preg_split("/,/",$orderResult->resource_list,-1);
+                $listHash = array();
+                
+                for ($i = 0; $i < count($list); $i++) {
+                    $value = $list[$i];
+                    $listHash[$value] = $i;
+                }
+                
+                foreach ($this->results as $result) {
+                    $records[$listHash[$result->getUniqueID()] . '_' . $result->getUniqueID()] = $result;
+                }
+                ksort($records);
+                $this->results = array_values($records);
+            } 
         }
     }
 

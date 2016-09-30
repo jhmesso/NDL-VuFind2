@@ -1,0 +1,56 @@
+<?
+  $list = $this->results->getListObject();
+  $user = $this->auth()->isLoggedIn();
+?>
+
+<h2><?=$this->transEsc('Sort manually');?></h2>
+<!-- <form action="tallennus" id="sort-favorite-list"> -->
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="button" id="save_order" value="save_order" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
+    </div>
+    <div id="error-message" class="col-xs-12" style="display: none;">
+        <?=$this->transEsc('Saving own order failed');?>
+    </div>
+  </div>
+  <ol id="sortable" class="sortable-favorite-list">
+    <? foreach ($this->results->getResults() as $i=>$current): ?>
+      <li id="<?=$current->getUniqueID() ?>"><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li> 
+    <? endforeach; ?>
+  </ol>
+<!-- </form> -->
+
+<script>
+$('#sortable').sortable({cursor: "move",opacity: 0.7});
+
+$("#save_order").click( function() {
+    var regexp = /\/([0-9]+)[?#]/g;
+    var userID = <? echo $user->id ?>;
+    var listID = (regexp.exec($(location).attr("href")))[1];
+    var listOfItems = $('#sortable').sortable('toArray').toString();
+
+
+    if (userID > 0 && listID > 0 && listOfItems.length > 0) {
+        $.ajax({
+            type: "POST",
+            url: "/vufind2/Cart/MyResearchBulk",
+            data: { 'orderedList' :  listOfItems,
+                    'saveOwnFavoritesOrder' : '1',
+                    'userID' : userID,
+                    'listID' : listID,
+                  }
+            })
+            .done(function() {
+		location.reload();
+	    })
+	    .fail(function() {
+		$('#error-message').show();
+	    });
+    } else {
+	$('#error-message').show();
+    }
+});
+
+
+</script>

@@ -12,8 +12,8 @@ return array(
             'feed' => 'Finna\View\Helper\Root\Factory::getFeed',
             'fileSrc' => 'Finna\View\Helper\Root\Factory::getFileSrc',
             'header' => 'Finna\View\Helper\Root\Factory::getHeader',
-            'headLink' => 'FinnaTheme\View\Helper\Factory::getHeadLink',
-            'headScript' => 'FinnaTheme\View\Helper\Factory::getHeadScript',
+            'headLink' => 'Finna\View\Helper\Root\Factory::getHeadLink',
+            'headScript' => 'Finna\View\Helper\Root\Factory::getHeadScript',
             'headTitle' => 'Finna\View\Helper\Root\Factory::getHeadTitle',
             'holdingsSettings' => 'Finna\View\Helper\Root\Factory::getHoldingsSettings',
             'imageSrc' => 'Finna\View\Helper\Root\Factory::getImageSrc',
@@ -45,7 +45,6 @@ return array(
                 'Finna\View\Helper\Root\CheckboxFacetCounts',
             'resultfeed' => 'Finna\View\Helper\Root\ResultFeed',
             'search' => 'Finna\View\Helper\Root\Search',
-            'streetSearch' => 'Finna\View\Helper\Root\StreetSearch',
             'translationEmpty' => 'Finna\View\Helper\Root\TranslationEmpty',
             'truncateUrl' => 'Finna\View\Helper\Root\TruncateUrl',
             'userPublicName' => 'Finna\View\Helper\Root\UserPublicName',
@@ -81,7 +80,8 @@ return array(
         'vendor/slick.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
-        'vendor/gauge.min.js'
+        'vendor/jquery-ui.min.js',
+        'vendor/jquery.ui.touch-punch.min.js',
     ),
     'less' => array(
         'active' => false

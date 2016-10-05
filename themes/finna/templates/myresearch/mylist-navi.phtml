@@ -47,4 +47,8 @@
       </div>
     </li>
   </ul>
+  <? if ($template = $this->content()->findTemplateForLng("content/Additions/favorites-post-navi")): ?>
+          <div class="favorites-post-list"><?=$this->render($template)?></div>
+  <? endif; ?>
+
 <!-- END of: finna - myresearch/mylist-navi.phtml -->

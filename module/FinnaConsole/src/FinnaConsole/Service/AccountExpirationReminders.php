@@ -106,7 +106,8 @@ class AccountExpirationReminders extends AbstractService
      */
     public function run($arguments)
     {
-        if (!isset($arguments[0]) || (int) $arguments[0] < 180 || !isset($arguments[1]) || !isset($arguments[2])) {
+        if (!isset($arguments[0])
+            || (int) $arguments[0] < 180 || !isset($arguments[1]) || !isset($arguments[2])) {
             echo "Usage:\n  php index.php util expiration_reminders <expiration_days> <remind_days_before> <frequency>\n\n"
                 . "  Sends a reminder for those users whose account will expire in <remind__days_before> days\n"
                 . "  Values below 180 are not accepted for <expiration_days> parameter.\n";
@@ -213,7 +214,7 @@ class AccountExpirationReminders extends AbstractService
             ->setLocale($language);
 
 
-        /* TODO Oletusarvoisesti vufind/config.ini-tiedostossa ei ole titleä ($this->currentSiteConfig['Site']['title']) */
+        /* TODO & FIX: By default vufind/config.ini does not contain title ($this->currentSiteConfig['Site']['title']) */
         $params = [
             'serviceName' => $this->currentSiteConfig['Site']['title'],
             'finna_auth_method' => $user->finna_auth_method,
@@ -225,7 +226,7 @@ class AccountExpirationReminders extends AbstractService
             'expireDate' =>  $expiration_datetime->format('d.m.Y H:i:s')
         ];
 
-        /* TODO: Millä selvitetään asennuksen juurihakemisto fiksummin */
+        /* TODO & FIX: Find a way to solve the root directory smarter */
         $templateDirs = [
             getenv('VUFIND_LOCAL_DIR') . "/../themes/finna/templates",
         ];
@@ -256,7 +257,7 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        /* TODO: Tänne ehkä myös lokitiedon kirjoitus kantaan lähetetyistä viesteistä */
+        /* TODO: Is there any need for logging this kind of operations */
 
         return true;
     }

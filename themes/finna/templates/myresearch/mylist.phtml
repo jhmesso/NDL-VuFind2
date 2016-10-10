@@ -23,6 +23,8 @@
   $this->headScript()->appendFile("finna-mylist.js");
   $this->headScript()->appendFile("vendor/jquery.editable.min.js");
   $this->headScript()->appendFile("finna-item-status.js");
+  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js');
+  $this->headScript()->appendFile('vendor/jquery.ui.touch-punch.min.js');
 
   // Load Javascript only if list view parameter is NOT full:
   if ($this->params->getOptions()->getListViewOption()!="full") {

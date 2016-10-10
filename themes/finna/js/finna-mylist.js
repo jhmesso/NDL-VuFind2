@@ -390,14 +390,14 @@ finna.myList = (function() {
 		    .fail(function() {
 			$('#error-message').show();
 			$('.own-favorite-list-spinner').hide();
-			$('.save_order').css('visibility', 'visible');
-			$('.btn-primary').css('visibility', 'visible');;
+			$('.save_order').show();
+			$('.btn-primary').show();
 		    });
 	    } else {
 		$('#error-message').show();
 		$('.own-favorite-list-spinner').hide();
-		$('.save_order').css('visibility', 'visible');
-		$('.btn-primary').css('visibility', 'visible');
+		$('.save_order').show();
+		$('.btn-primary').show();
 	    }
 	});
     };

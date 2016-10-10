@@ -356,8 +356,14 @@ finna.myList = (function() {
 
     var initFavoriteOrderingFunctionality = function() {
 	$('#sortable').sortable({cursor: "move",opacity: 0.7});
+	$('.own-favorite-list-spinner').hide();
 
-	$("#save_order").click( function() {
+
+	$(".save_order").click( function() {
+	    $('.own-favorite-list-spinner').show();
+	    $('.save_order').hide();
+	    $('.btn-primary').hide();
+
 	    var userID = $('input[name=user_id]').val();
 	    var listID = $('input[name=list_id]').val();
 	    var listOfItems = $('#sortable').sortable('toArray').toString();
@@ -383,9 +389,15 @@ finna.myList = (function() {
 		    })
 		    .fail(function() {
 			$('#error-message').show();
+			$('.own-favorite-list-spinner').hide();
+			$('.save_order').css('visibility', 'visible');
+			$('.btn-primary').css('visibility', 'visible');;
 		    });
 	    } else {
 		$('#error-message').show();
+		$('.own-favorite-list-spinner').hide();
+		$('.save_order').css('visibility', 'visible');
+		$('.btn-primary').css('visibility', 'visible');
 	    }
 	});
     };

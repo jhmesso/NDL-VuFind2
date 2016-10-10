@@ -8,8 +8,11 @@
 <h2><?=$this->transEsc('Sort manually');?></h2>
   <div class="row">
     <div class="col-xs-12">
-      <button type="button" id="save_order" value="save_order" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
-      <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
+      <div class="own-favorite-list-button-area">
+        <div class="own-favorite-list-spinner"><div class="fa fa-spinner fa-spin"></div></div>
+        <button type="button" value="save_order" class="save_order btn btn-primary"><?=$this->transEsc('Save Order');?></button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
+      </div>
     </div>
     <div id="error-message" class="col-xs-12" style="display: none;">
         <?=$this->transEsc('Saving own order failed');?>

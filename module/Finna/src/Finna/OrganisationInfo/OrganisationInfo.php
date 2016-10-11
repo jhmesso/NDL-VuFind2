@@ -119,7 +119,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
         $this->language = $this->validateLanguage($language, $allLanguages);
 
-        if (isset($config->General->fallbackLanguage)) {
+        if (!empty($config->General->fallbackLanguage)) {
             $fallback = $config->General->fallbackLanguage;
             $fallback = $this->validateLanguage($fallback, $allLanguages);
             if ($fallback != $this->language) {
@@ -979,6 +979,10 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
             if ($today) {
                 $scheduleData['today'] = true;
+            }
+
+            if ($info) {
+                $scheduleData['info'] = $info;
             }
 
             $schedules[] = $scheduleData;

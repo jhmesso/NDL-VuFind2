@@ -1,6 +1,6 @@
 <?php
 /**
- * Row Definition for user_list
+ * Markdown view helper
  *
  * PHP version 5
  *
@@ -20,42 +20,36 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category VuFind
- * @package  Db_Row
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  View_Helpers
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-namespace Finna\Db\Row;
-use VuFind\Exception\ListPermission as ListPermissionException,
-    VuFind\Exception\MissingField as MissingFieldException;
+namespace Finna\View\Helper\Root;
 
 /**
- * Row Definition for user_list
+ * Markdown view helper
  *
  * @category VuFind
- * @package  Db_Row
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  View_Helpers
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class UserList extends \VuFind\Db\Row\UserList
+class Markdown extends \Zend\View\Helper\AbstractHelper
 {
     /**
-     * Saves the properties to the database.
+     * Return HTML.
      *
-     * This performs an intelligent insert/update, and reloads the
-     * properties with fresh data from the table on success.
+     * @param string $markdown Markdown
      *
-     * @param \VuFind\Db\Row\User|bool $user Logged-in user (false if none)
-     *
-     * @return mixed The primary key value(s), as an associative array if the
-     *     key is compound, or a scalar if the key is single-column.
-     * @throws ListPermissionException
-     * @throws MissingFieldException
+     * @return string
      */
-    public function save($user = false)
+    public function toHtml($markdown)
     {
-        $this->finna_updated = date('Y-m-d H:i:s');
-        return parent::save($user);
+        $parser = new \Parsedown();
+        $parser->setMarkupEscaped(true);
+        $parser->setBreaksEnabled(true);
+        return $parser->text($markdown);
     }
 }

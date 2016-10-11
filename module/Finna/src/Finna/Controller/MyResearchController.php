@@ -723,7 +723,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $sortList = [];
-        if ($sort == "own_ordering"
+        if ($sort == 'own_ordering'
             && (empty($user) || empty($list)
             || $table->getFavoriteOrder($user->id, $list->id) === false)
         ) {

@@ -61,7 +61,7 @@ class Results extends \VuFind\Search\Favorites\Results
 
         $sort = $this->getParams()->getSort();
 
-        if ($sort == "own_ordering"
+        if ($sort == 'own_ordering'
             && ! $table->getFavoriteOrder($user->id, $list_id)
         ) {
             $sort = 'id desc';
@@ -90,7 +90,7 @@ class Results extends \VuFind\Search\Favorites\Results
             ksort($records);
             $this->results = array_values($records);
 
-        } else if ($sort === "own_ordering") {
+        } else if ($sort === 'own_ordering') {
 
             if ($orderResult = $table->getFavoriteOrder($user->id, $list_id)) {
 

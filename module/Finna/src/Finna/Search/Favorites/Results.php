@@ -48,7 +48,24 @@ class Results extends \VuFind\Search\Favorites\Results
      */
     protected function performSearch()
     {
+        $authManager = $this->serviceLocator->get('VuFind\AuthManager');
+
+        $table = $this->getTable('FavoriteOrder');
+        $user = $authManager->isLoggedIn();
+
+        if (! empty($this->getParams()->getFilters()['lists'][0])) {
+            $list_id = $this->getParams()->getFilters()['lists'][0];
+        } else {
+            $list_id = null;
+        }
+
         $sort = $this->getParams()->getSort();
+
+        if ($sort == "own_ordering" &&
+            ! $table->getFavoriteOrder($user->id, $list_id)) {
+            $sort = 'id desc';
+        }
+
         $sortNewestAddedFirst = $sort == 'id desc';
         if ($sortNewestAddedFirst) {
             // Set sort option to 'id' (ascending), since we reverse the
@@ -73,16 +90,6 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->results = array_values($records);
 
         } else if ($sort === "own_ordering") {
-            $authManager = $this->serviceLocator->get('VuFind\AuthManager');
-            $user = $authManager->isLoggedIn();
-
-            if (! empty($this->getParams()->getFilters()['lists'][0])) {
-                $list_id = $this->getParams()->getFilters()['lists'][0];
-            } else {
-                $list_id = null;
-            }
-            
-            $table = $this->getTable('FavoriteOrder');
 
             if ($orderResult = $table->getFavoriteOrder($user->id, $list_id)) {
 

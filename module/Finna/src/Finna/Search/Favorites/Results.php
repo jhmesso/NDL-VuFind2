@@ -87,7 +87,7 @@ class Results extends \VuFind\Search\Favorites\Results
             if ($orderResult = $table->getFavoriteOrder($user->id, $list_id)) {
 
                 $list = explode(',', $orderResult->resource_list);
-                $listHash = array();
+                $listHash = [];
                 
                 for ($i = 0; $i < count($list); $i++) {
                     $value = $list[$i];

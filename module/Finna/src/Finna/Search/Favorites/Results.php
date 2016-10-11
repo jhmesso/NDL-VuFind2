@@ -49,9 +49,9 @@ class Results extends \VuFind\Search\Favorites\Results
     protected function performSearch()
     {
         $authManager = $this->serviceLocator->get('VuFind\AuthManager');
-
-        $table = $this->getTable('FavoriteOrder');
         $user = $authManager->isLoggedIn();
+        
+        $table = $this->getTable('FavoriteOrder');
 
         if (! empty($this->getParams()->getFilters()['lists'][0])) {
             $list_id = $this->getParams()->getFilters()['lists'][0];

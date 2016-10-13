@@ -703,6 +703,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * Create sort list for public list page.
      * If no sort option selected, set first one from the list to default.
      *
+     * @param list $list List object
+     *
      * @return array
      */
     protected function createSortList($list)
@@ -725,8 +727,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $sortList = [];
 
-        if  (empty($list) || ((! $list->public
-                               && $table->getFavoriteOrder($list->id,$user->id) === false) || $list->public && $table->getFavoriteOrder($list->id) === false)
+        if (empty($list)
+            || ((! $list->public
+            && $table->getFavoriteOrder($list->id, $user->id) === false)
+            || $list->public && $table->getFavoriteOrder($list->id) === false)
         ) {
             array_shift($sortOptions);
             $sort = 'id desc';

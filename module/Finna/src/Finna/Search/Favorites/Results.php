@@ -55,8 +55,9 @@ class Results extends \VuFind\Search\Favorites\Results
         $sort = $this->getParams()->getSort();
 
         if ($sort == 'own_ordering'
-            && (empty($list) || (! $list->public
-                                 && $table->getFavoriteOrder($list->id,$user->id) === false))
+            && (empty($list)
+            || (! $list->public
+            && $table->getFavoriteOrder($list->id, $user->id) === false))
         ) {
             $sort = 'id desc';
         }
@@ -85,7 +86,7 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->results = array_values($records);
 
         } else if ($sort === 'own_ordering') {
-            if ($orderResult = $table->getFavoriteOrder($list->id,$user->id)) {
+            if ($orderResult = $table->getFavoriteOrder($list->id, $user->id)) {
                 $list = explode(',', $orderResult->resource_list);
                 $listHash = [];
                 

@@ -715,7 +715,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         
         if (empty($list) && $results = $view->results) {
-            $list = $results->getListObject($id);
+            $list = $results->getListObject();
         }
 
         $sortOptions = self::getFavoritesSortList();

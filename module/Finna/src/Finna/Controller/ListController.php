@@ -79,8 +79,9 @@ class ListController extends \Finna\Controller\MyResearchController
             );
 
             $results->performAndProcessSearch();
-
-            $username = $this->getListUsername($results->getListObject()->user_id);
+            $listObj = $results->getListObject();
+            
+            $username = $this->getListUsername($listObject->user_id);
 
             // Special case: If we're in RSS view, we need to render differently:
             if (isset($params) && $params->getView() == 'rss') {
@@ -108,7 +109,7 @@ class ListController extends \Finna\Controller\MyResearchController
                     'params' => $params,
                     'results' => $results,
                     'list_username' => $username,
-                    'sortList' => $this->createSortList()
+                    'sortList' => $this->createSortList($listObj)
                 ]
             );
             return $view;

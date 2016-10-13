@@ -50,19 +50,13 @@ class Results extends \VuFind\Search\Favorites\Results
     {
         $authManager = $this->serviceLocator->get('VuFind\AuthManager');
         $user = $authManager->isLoggedIn();
-        
         $table = $this->getTable('FavoriteOrder');
-
-        if (! empty($this->getParams()->getFilters()['lists'][0])) {
-            $list_id = $this->getParams()->getFilters()['lists'][0];
-        } else {
-            $list_id = null;
-        }
-
+        $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
 
         if ($sort == 'own_ordering'
-            && ! $table->getFavoriteOrder($user->id, $list_id)
+            && (empty($list) || (! $list->public
+                                 && $table->getFavoriteOrder($list->id,$user->id) === false))
         ) {
             $sort = 'id desc';
         }
@@ -91,9 +85,7 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->results = array_values($records);
 
         } else if ($sort === 'own_ordering') {
-
-            if ($orderResult = $table->getFavoriteOrder($user->id, $list_id)) {
-
+            if ($orderResult = $table->getFavoriteOrder($list->id,$user->id)) {
                 $list = explode(',', $orderResult->resource_list);
                 $listHash = [];
                 
@@ -140,6 +132,7 @@ class Results extends \VuFind\Search\Favorites\Results
             // if one is found:
             $filters = $this->getParams()->getFilters();
             $listId = isset($filters['lists'][0]) ? $filters['lists'][0] : null;
+
             if (null === $listId) {
                 $this->list = null;
             } else {

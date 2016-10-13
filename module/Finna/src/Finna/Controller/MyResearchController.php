@@ -705,14 +705,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return array
      */
-    protected function createSortList()
+    protected function createSortList($list)
     {
         $view = parent::mylistAction();
         $user = $this->getUser();
         $table = $this->getTable('FavoriteOrder');
 
-        if ($results = $view->results) {
-            $list = $results->getListObject();
+        
+        if (empty($list) && $results = $view->results) {
+            $list = $results->getListObject($id);
         }
 
         $sortOptions = self::getFavoritesSortList();
@@ -723,9 +724,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $sortList = [];
-        if ($sort == 'own_ordering'
-            && (empty($user) || empty($list)
-            || $table->getFavoriteOrder($user->id, $list->id) === false)
+
+        if  (empty($list) || ((! $list->public
+                               && $table->getFavoriteOrder($list->id,$user->id) === false) || $list->public && $table->getFavoriteOrder($list->id) === false)
         ) {
             array_shift($sortOptions);
             $sort = 'id desc';

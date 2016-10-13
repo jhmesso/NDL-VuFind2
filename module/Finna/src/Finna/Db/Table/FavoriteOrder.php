@@ -81,19 +81,29 @@ class FavoriteOrder extends \VuFind\Db\Table\Gateway
     /**
      * Get favorite list order
      *
-     * @param int $user_id User_id
      * @param int $list_id List_id
+     * @param int $user_id User_id
      *
      * @return boolean|array
      */
-    public function getFavoriteOrder($user_id,$list_id)
+    public function getFavoriteOrder($list_id,$user_id)
     {
-        if ($result = $this->select(
-            ['user_id' => $user_id, 'list_id' => $list_id]
-        )->current()) {
-            return $result;
+        if (empty($user_id)) {
+            if ($result = $this->select(
+                ['list_id' => $list_id]
+            )->current()) {
+                return $result;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            if ($result = $this->select(
+                ['list_id' => $list_id, 'user_id' => $user_id]
+            )->current()) {
+                return $result;
+            } else {
+                return false;
+            }
         }
     }
 

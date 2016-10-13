@@ -102,7 +102,7 @@ class Results extends \VuFind\Search\Favorites\Results
                 }
                 ksort($records);
                 $this->results = array_values($records);
-            } 
+            }
         } else if ($sortNewestAddedFirst) {
             $this->getParams()->setSort($sort);
             $this->results = array_reverse($this->results);

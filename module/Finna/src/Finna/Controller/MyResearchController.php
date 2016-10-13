@@ -214,7 +214,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $view;
         }
 
-        $view->sortList = $this->createSortList();
+        $view->sortList = $this->createSortList(0);
 
         return $view;
     }

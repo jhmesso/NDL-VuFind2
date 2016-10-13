@@ -730,9 +730,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (empty($list)
             || ((! $list->public
             && $table->getFavoriteOrder($list->id, $user->id) === false)
-            || ($list->public && $table->getFavoriteOrder($list->id) === false))
+            || ($list->public && $table->getFavoriteOrder($list->id, 0) === false))
         ) {
             array_shift($sortOptions);
+            if ($sort == 'own_ordering') {
+                $sort = 'id desc';
+            }
         }
 
         foreach ($sortOptions as $key => $value) {

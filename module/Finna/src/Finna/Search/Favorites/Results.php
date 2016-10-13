@@ -58,7 +58,7 @@ class Results extends \VuFind\Search\Favorites\Results
             && (empty($list)
             || ((! $list->public
             && $table->getFavoriteOrder($list->id, $user->id) === false))
-            || ($list->public && $table->getFavoriteOrder($list->id, 0) === false))
+            || ($list->public && $table->getFavoriteOrder($list->id) === false))
         ) {
             $sort = 'id desc';
         }

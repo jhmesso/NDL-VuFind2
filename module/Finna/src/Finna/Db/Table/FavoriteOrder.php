@@ -86,7 +86,7 @@ class FavoriteOrder extends \VuFind\Db\Table\Gateway
      *
      * @return boolean|array
      */
-    public function getFavoriteOrder($list_id,$user_id)
+    public function getFavoriteOrder($list_id,$user_id = null)
     {
         if (! $user_id) {
             if ($result = $this->select(

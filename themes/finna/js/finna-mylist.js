@@ -374,13 +374,11 @@ finna.myList = (function() {
 			  }
 		})
 		    .done(function() {
-                       console.log('|' + window.location.href + '|');
 			if (window.location.href.match(/sort=[\+\w]+$/)) {
 			    window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"");
 			} else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
 			    window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1");
 			} else {
-                            console.log("HEP");
 			    window.location.reload();
 			}
 		    })

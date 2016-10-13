@@ -69,7 +69,6 @@ class Options extends \VuFind\Search\Favorites\Options
 
         $this->sortOptions = [];
         $this->defaultSort = '';
-
         foreach (MyResearchController::getFavoritesSortList() as $key => $value) {
             if (empty($this->defaultSort)) {
                 $this->defaultSort = $key;
@@ -77,4 +76,5 @@ class Options extends \VuFind\Search\Favorites\Options
             $this->sortOptions[$key] = $value;
         }
     }
+    
 }

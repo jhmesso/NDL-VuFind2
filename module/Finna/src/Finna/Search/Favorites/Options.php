@@ -76,5 +76,5 @@ class Options extends \VuFind\Search\Favorites\Options
             $this->sortOptions[$key] = $value;
         }
     }
-    
+
 }

@@ -520,7 +520,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public static function getFavoritesSortList()
     {
         return [
-            'own_ordering' => 'sort_own_order',
+            'custom_ordering' => 'sort_custom_order',
             'id desc' => 'sort_saved',
             'id' => 'sort_saved asc',
             'title' => 'sort_title',
@@ -711,7 +711,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     {
         $view = parent::mylistAction();
         $user = $this->getUser();
-        $table = $this->getTable('FavoriteOrder');
+        $table = $this->getTable('UserResource');
 
         
         if (empty($list) && $results = $view->results) {
@@ -729,11 +729,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         if (empty($list)
             || ((! $list->public
-            && $table->getFavoriteOrder($list->id, $user->id) === false)
-            || ($list->public && $table->getFavoriteOrder($list->id) === false))
+            && $table->getCustomFavoriteOrder($list->id, $user->id) === false)
+            || ($list->public && $table->getCustomFavoriteOrder($list->id) === false))
         ) {
             array_shift($sortOptions);
-            if ($sort == 'own_ordering') {
+            if ($sort == 'custom_ordering') {
                 $sort = 'id desc';
             }
         }
@@ -964,11 +964,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $listID = $this->params()->fromPost('listID');
         $orderedList = $this->params()->fromPost('orderedList');
-        $table = $this->getTable('FavoriteOrder');
+        $table = $this->getTable('UserResource');
         
         if (! empty($listID)
             && ! empty($orderedList)
-            && $table->saveFavoriteOrder($user->id, $listID, $orderedList)
+            && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
         ) {
             return true;
         } else {

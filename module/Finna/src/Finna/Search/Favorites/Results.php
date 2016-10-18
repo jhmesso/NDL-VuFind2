@@ -50,15 +50,15 @@ class Results extends \VuFind\Search\Favorites\Results
     {
         $authManager = $this->serviceLocator->get('VuFind\AuthManager');
         $user = $authManager->isLoggedIn();
-        $table = $this->getTable('FavoriteOrder');
+        $table = $this->getTable('UserResource');
         $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
 
-        if ($sort == 'own_ordering'
+        if ($sort == 'custom_ordering'
             && (empty($list)
             || ((! $list->public
-            && $table->getFavoriteOrder($list->id, $user->id) === false))
-            || ($list->public && $table->getFavoriteOrder($list->id) === false))
+            && $table->getCustomFavoriteOrder($list->id, $user->id) === false))
+            || ($list->public && $table->getCustomFavoriteOrder($list->id) === false))
         ) {
             $sort = 'id desc';
         }
@@ -86,11 +86,10 @@ class Results extends \VuFind\Search\Favorites\Results
             ksort($records);
             $this->results = array_values($records);
 
-        } else if ($sort === 'own_ordering') {
-            if ($orderResult = $table->getFavoriteOrder($list->id, $user->id)) {
-                $list = explode(',', $orderResult->resource_list);
+        } else if ($sort === 'custom_ordering') {
+            if ($list = $table->getCustomFavoriteOrder($list->id, $user->id)) {
                 $listHash = [];
-                
+
                 for ($i = 0; $i < count($list); $i++) {
                     $value = $list[$i];
                     $listHash[$value] = $i;

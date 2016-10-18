@@ -33,6 +33,7 @@ ALTER TABLE `user` ADD COLUMN `finna_language` varchar(30) NOT NULL DEFAULT '';
 ALTER TABLE `user` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `user` ADD COLUMN `finna_last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00';
 ALTER TABLE `user` ADD COLUMN `finna_auth_method` varchar(50) DEFAULT NULL;
+ALTER TABLE `user_resource` ADD COLUMN `finna_custom_order_index` int DEFAULT NULL AFTER `list_id`;
 CREATE INDEX `finna_user_due_date_reminder_key` ON user (`finna_due_date_reminder`);
 --
 -- Additional columns for user_list
@@ -134,18 +135,6 @@ CREATE TABLE `finna_metalib_search` (
   KEY `created` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-
-CREATE TABLE `finna_favorite_order` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `list_id` int(11) NOT NULL,
-  `resource_list` text,
-  `saved` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `user_list` (`user_id`,`list_id`),  CONSTRAINT `finna_favorite_order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

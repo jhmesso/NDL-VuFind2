@@ -1,4 +1,6 @@
+<!-- START of: finna - myresearch/sortlist.phtml -->
 <?
+  $this->headScript()->appendFile("finna-mylist.js");
   $list = $this->results->getListObject();
   $user = $this->auth()->isLoggedIn();
 ?>
@@ -15,7 +17,7 @@
       </div>
     </div>
     <div id="error-message" class="col-xs-12" style="display: none;">
-        <?=$this->transEsc('Saving own order failed');?>
+        <?=$this->transEsc('error_has_occurred');?>
     </div>
   </div>
   <ol id="sortable" class="sortable-favorite-list">
@@ -23,4 +25,13 @@
       <li id="<?=$current->getUniqueID() ?>"><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li> 
     <? endforeach; ?>
   </ol>
-<script>finna.myList.initFavoriteOrderingFunctionality();</script> 
+<?
+  $script = <<<EOT
+  finna.myList.initFavoriteOrderingFunctionality();
+EOT;
+
+// Inline the script for lightbox compatibility
+echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+?>
+<!-- END of: finna - myresearch/sortlist.phtml -->
+

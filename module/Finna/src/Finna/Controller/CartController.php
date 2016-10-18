@@ -46,13 +46,13 @@ class CartController extends \VuFind\Controller\CartController
      */
     public function myresearchbulkAction()
     {
-        if (! empty($this->params()->fromPost('saveOwnFavoritesOrder', ''))) {
+        if (! empty($this->params()->fromPost('saveCustomFavoritesOrder', ''))) {
             $listID = $this->params()->fromPost('listID');
             $this->session->url = empty($listID)
                   ? $this->url()->fromRoute('myresearch-favorites')
                   : $this->url()->fromRoute('userList', ['id' => $listID]);
             $controller = 'MyResearch';
-            $action = 'SaveOwnFavoritesOrder';
+            $action = 'SaveCustomFavoritesOrder';
             return $this->forwardTo($controller, $action);
         } else {
             return parent::myresearchbulkAction();

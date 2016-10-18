@@ -368,7 +368,7 @@ finna.myList = (function() {
 		    type: "POST",
 		    url: VuFind.path + "/Cart/MyResearchBulk",
 		    data: { 'orderedList' :  listOfItems,
-			    'saveOwnFavoritesOrder' : '1',
+			    'saveCustomFavoritesOrder' : '1',
 			    'userID' : userID,
 			    'listID' : listID,
 			  }

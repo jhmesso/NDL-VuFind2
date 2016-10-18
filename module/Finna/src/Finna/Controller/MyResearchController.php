@@ -28,8 +28,6 @@
  */
 namespace Finna\Controller;
 
-use Finna\Db\Table\FavoriteOrder;
-
 /**
  * Controller for the user account area.
  *
@@ -955,7 +953,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return mixed
      */
-    public function saveOwnFavoritesOrderAction()
+    public function saveCustomFavoritesOrderAction()
     {
         $user = $this->getUser();
         if (!$user) {

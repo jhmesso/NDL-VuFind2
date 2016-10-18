@@ -150,7 +150,9 @@ class UserResource extends \VuFind\Db\Table\UserResource
 
         $list = [];
         foreach ($this->select($callback) as $result) {
-            $list[] = $result->record_id;
+            if ($result->finna_custom_order_index) {
+                $list[] = $result->record_id;
+            }
         }
         if (empty($list)) {
             return false;

@@ -549,6 +549,17 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $view;
     }
 
+    public function saveCustomOrderAction()
+    {
+        $listID = $this->params()->fromPost('listID');
+        $this->session->url = empty($listID)
+                            ? $this->url()->fromRoute('myresearch-favorites')
+                            : $this->url()->fromRoute('userList', ['id' => $listID]);
+        $controller = 'MyResearch';
+        $action = 'SaveCustomFavoritesOrder';
+        return $this->forwardTo($controller, $action);
+    }
+
     /**
      * Save alert schedule for a saved search into DB
      *

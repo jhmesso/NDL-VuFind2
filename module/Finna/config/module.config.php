@@ -143,7 +143,6 @@ $config = [
     'controllers' => [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
-            'cart' => 'Finna\Controller\Factory::getCartController',
             'record' => 'Finna\Controller\Factory::getRecordController',
         ],
         'invokables' => [
@@ -420,6 +419,7 @@ $staticRoutes = [
     'Browse/Database', 'Browse/Journal',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
+    'MyResearch/SaveCustomOrder',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record'
 ];

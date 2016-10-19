@@ -71,6 +71,8 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->getParams()->setSort('id');
         }
 
+        $this->getParams()->setSort($sort);
+        
         parent::performSearch();
 
         // Other sort options are handled in the database, but format is language-
@@ -95,12 +97,13 @@ class Results extends \VuFind\Search\Favorites\Results
                     $value = $list[$i];
                     $listHash[$value] = $i;
                 }
-                
+
                 foreach ($this->results as $result) {
                     $records[$listHash[$result->getUniqueID()]
                              . '_' . $result->getUniqueID()] = $result;
                 }
                 ksort($records);
+                
                 $this->results = array_values($records);
             }
         } else if ($sortNewestAddedFirst) {

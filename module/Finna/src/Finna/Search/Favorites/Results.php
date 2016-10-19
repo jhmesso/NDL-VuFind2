@@ -27,8 +27,6 @@
  */
 namespace Finna\Search\Favorites;
 
-use Finna\Db\Table\FavoriteOrder;
-
 /**
  * Search Favorites Results
  *

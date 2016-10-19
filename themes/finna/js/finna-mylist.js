@@ -353,7 +353,6 @@ finna.myList = (function() {
 	$('#sortable').sortable({cursor: "move",opacity: 0.7});
 	$('.own-favorite-list-spinner').hide();
 
-
 	$(".save_order").click( function() {
 	    $('.own-favorite-list-spinner').show();
 	    $('.save_order').hide();
@@ -373,27 +372,44 @@ finna.myList = (function() {
 			  }
 		})
 		    .done(function() {
-			if (window.location.href.match(/sort=[\+\w]+$/)) {
-			    window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"");
-			} else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
-			    window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1");
-			} else {
-                            VuFind.refreshPage();
-			}
+			reloadFavoritePage();
 		    })
 		    .fail(function() {
-			$('#error-message').show();
-			$('.own-favorite-list-spinner').hide();
-			$('.save_order').show();
-			$('.btn-primary').show();
+			failAction();
 		    });
 	    } else {
-		$('#error-message').show();
-		$('.own-favorite-list-spinner').hide();
-		$('.save_order').show();
-		$('.btn-primary').show();
+		failAction();
 	    }
 	});
+
+	$(".close").click( function() {
+	    reloadFavoritePage();
+        });
+
+	$(".reset_order").click( function() {
+	    reloadFavoritePage();
+        });
+
+        var reloadFavoritePage = function() {
+	    if ($('#modal').css('display') != 'none') {
+		if (window.location.href.match(/sort=[\+\w]+$/)) {
+		    window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"");
+		} else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
+		    window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1");
+		} else {
+		    VuFind.refreshPage();
+		}
+	    } else {
+		window.location.href = VuFind.path; //TODO: Fix this
+	    }
+	}
+
+	var failAction = function () {
+	    $('#error-message').show();
+	    $('.own-favorite-list-spinner').hide();
+	    $('.save_order').show();
+	    $('.btn-primary').show();
+	}
     };
     
     var initEditableMarkdownField = function(element, callback) {

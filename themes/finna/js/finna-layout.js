@@ -598,10 +598,8 @@ finna.layout = (function() {
 
     var initPreventModalClose = function() {
       $('#modal').on('hide.bs.modal', function (e) {
-        if ($('#modal').find('.sortable-favorite-list').length > 0 && $(event.target).attr('id') == "modal") {
-          e.preventDefault();
-        }
-      });
+           e.preventDefault();
+       });
     };
 
     var initScrollRecord = function() {

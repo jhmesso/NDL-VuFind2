@@ -549,6 +549,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $view;
     }
 
+
+    /**
+     * Save favorite custom order into DB
+     *
+     * @return mixed
+     */
     public function saveCustomOrderAction()
     {
         $listID = $this->params()->fromPost('listID');

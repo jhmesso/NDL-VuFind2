@@ -379,7 +379,7 @@ finna.myList = (function() {
 			} else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
 			    window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1");
 			} else {
-			    window.location.reload();
+                            VuFind.refreshPage();
 			}
 		    })
 		    .fail(function() {

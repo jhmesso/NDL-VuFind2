@@ -54,11 +54,12 @@ class Results extends \VuFind\Search\Favorites\Results
         $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
 
-        if ($sort == 'custom_ordering'
+        if ($sort == 'custom_order'
             && (empty($list)
             || ((! $list->public
             && $table->getCustomFavoriteOrder($list->id, $user->id) === false))
-            || ($list->public && $table->getCustomFavoriteOrder($list->id) === false))
+            || ($list->public
+            && $table->getCustomFavoriteOrder($list->id) === false))
         ) {
             $sort = 'id desc';
         }
@@ -86,7 +87,7 @@ class Results extends \VuFind\Search\Favorites\Results
             ksort($records);
             $this->results = array_values($records);
 
-        } else if ($sort === 'custom_ordering') {
+        } else if ($sort === 'custom_order') {
             if ($list = $table->getCustomFavoriteOrder($list->id, $user->id)) {
                 $listHash = [];
 

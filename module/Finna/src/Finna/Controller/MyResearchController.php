@@ -518,7 +518,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public static function getFavoritesSortList()
     {
         return [
-            'custom_ordering' => 'sort_custom_order',
+            'custom_order' => 'sort_custom_order',
             'id desc' => 'sort_saved',
             'id' => 'sort_saved asc',
             'title' => 'sort_title',
@@ -728,10 +728,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (empty($list)
             || ((! $list->public
             && $table->getCustomFavoriteOrder($list->id, $user->id) === false)
-            || ($list->public && $table->getCustomFavoriteOrder($list->id) === false))
+            || ($list->public
+            && $table->getCustomFavoriteOrder($list->id) === false))
         ) {
             array_shift($sortOptions);
-            if ($sort == 'custom_ordering') {
+            if ($sort == 'custom_order') {
                 $sort = 'id desc';
             }
         }

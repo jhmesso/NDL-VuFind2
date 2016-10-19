@@ -77,42 +77,43 @@ class UserResource extends \VuFind\Db\Table\UserResource
         }
     }
 
-
     /**
      * Add custom favorite list order
      *
-     * @param int    $user_id       User_id
-     * @param int    $list_id       List_id
-     * @param string $resource_list Ordered List of Resources
+     * @param int    $userId       User_id
+     * @param int    $listId       List_id
+     * @param string $resourceList Ordered List of Resources
      *
      * @return boolean
      */
-    public function saveCustomFavoriteOrder($user_id,$list_id,$resource_list) {
+    public function saveCustomFavoriteOrder($userId,$listId,$resourceList)
+    {
         $index_counter = 0;
         $resource_index = [];
 
-        foreach (explode(',', $resource_list) as $resource) {
+        foreach (explode(',', $resourceList) as $resource) {
             $index_counter++;
-            $resource_index["$resource"] = $index_counter;
+            $resource_index[$resource] = $index_counter;
         }
 
-        $callback = function($select) use ($list_id, $user_id) {
+        $callback = function ($select) use ($listId, $userId) {
             $select->join(
                 ['r' => 'resource'],
                 'r.id = user_resource.resource_id',
                 ['record_id']
             );
-            $select->where->equalTo('list_id', $list_id);
-            $select->where->equalTo('user_id', $user_id);
+            $select->where->equalTo('list_id', $listId);
+            $select->where->equalTo('user_id', $userId);
         };
 
         try {
             foreach ($this->select($callback) as $row) {
                 if ($row_to_update = $this->select(
-                    ['user_id' => $user_id, 'list_id' => $list_id,
+                    ['user_id' => $userId, 'list_id' => $listId,
                      'resource_id' => $row->resource_id]
                 )->current()) {
-                    $row_to_update->finna_custom_order_index = $resource_index[$row->record_id];
+                    $row_to_update->finna_custom_order_index
+                        = $resource_index[$row->record_id];
                     $row_to_update->save();
                 } else {
                     return false;
@@ -124,22 +125,21 @@ class UserResource extends \VuFind\Db\Table\UserResource
         return true;
     }
 
-
     /**
      * Get custom favorite list order
      *
-     * @param int $list_id List_id
-     * @param int $user_id User_id
+     * @param int $listId List_id
+     * @param int $userId User_id
      *
      * @return boolean|string
      */
-    public function getCustomFavoriteOrder($list_id, $user_id = null)
+    public function getCustomFavoriteOrder($listId, $userId = null)
     {
-        $callback = function($select) use ($list_id, $user_id) {
-            if ($user_id) {
-                $select->where->equalTo('user_id', $user_id);
+        $callback = function ($select) use ($listId, $userId) {
+            if ($userId) {
+                $select->where->equalTo('user_id', $userId);
             }
-            $select->where->equalTo('list_id', $list_id);
+            $select->where->equalTo('list_id', $listId);
             $select->join(
                 ['r' => 'resource'],
                 'user_resource.resource_id = r.id',

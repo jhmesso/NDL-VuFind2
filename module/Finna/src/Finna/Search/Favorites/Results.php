@@ -86,24 +86,6 @@ class Results extends \VuFind\Search\Favorites\Results
             }
             ksort($records);
             $this->results = array_values($records);
-
-        } else if ($sort === 'custom_order') {
-            if ($list = $table->getCustomFavoriteOrder($list->id, $user->id)) {
-                $listHash = [];
-
-                for ($i = 0; $i < count($list); $i++) {
-                    $value = $list[$i];
-                    $listHash[$value] = $i;
-                }
-
-                foreach ($this->results as $result) {
-                    $records[$listHash[$result->getUniqueID()]
-                             . '_' . $result->getUniqueID()] = $result;
-                }
-                ksort($records);
-                
-                $this->results = array_values($records);
-            }
         } else if ($sortNewestAddedFirst) {
             $this->getParams()->setSort($sort);
             $this->results = array_reverse($this->results);

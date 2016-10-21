@@ -381,15 +381,7 @@ finna.myList = (function() {
 		failAction();
 	    }
 	});
-
-	$(".close").click( function() {
-	    reloadFavoritePage();
-        });
-
-	$(".reset_order").click( function() {
-	    reloadFavoritePage();
-        });
-
+	
         var reloadFavoritePage = function() {
 	    if ($('#modal').css('display') != 'none') {
 		if (window.location.href.match(/sort=[\+\w]+$/)) {

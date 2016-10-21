@@ -217,6 +217,7 @@ $config = [
             ],
             'db_table' => [
                 'factories' => [
+                    'resource' => 'Finna\Db\Table\Factory::getResource',
                     'user' => 'Finna\Db\Table\Factory::getUser',
                     'userlist' => 'Finna\Db\Table\Factory::getUserList',
                 ],

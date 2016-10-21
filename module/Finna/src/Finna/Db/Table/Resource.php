@@ -52,7 +52,6 @@ class Resource extends \VuFind\Db\Table\Resource
      *
      * @return \Zend\Db\ResultSet\AbstractResultSet
      */
-
     public function getFavorites($user, $list = null, $tags = [],
         $sort = null, $offset = 0, $limit = null
     ) {

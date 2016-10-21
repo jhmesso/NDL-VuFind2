@@ -14,7 +14,7 @@ finna.layout = (function() {
         });
         map.scrollWheelZoom.disable();
     };
-
+    
     var initResizeListener = function() {
         var intervalId = false;
         $(window).on("resize", function(e) {
@@ -478,7 +478,7 @@ finna.layout = (function() {
             $('.result-view-grid').addClass('touch-device');
         }
     };
-
+    
     var initImageCheck = function() {
         $(".image-popup-trigger img").each(function() {
             $(this).one("load",function() {
@@ -594,12 +594,6 @@ finna.layout = (function() {
           $('body').addClass('ipad-six');
         }
       }
-    };
-
-    var initPreventModalClose = function() {
-      $('#modal').on('hide.bs.modal', function (e) {
-           e.preventDefault();
-       });
     };
 
     var initScrollRecord = function() {
@@ -747,7 +741,6 @@ finna.layout = (function() {
             initIpadCheck();
             initLoginRedirect();
             initLoadMasonry();
-            initPreventModalClose();
             initOrganisationInfoWidgets();
             initOrganisationPageLinks();
         }

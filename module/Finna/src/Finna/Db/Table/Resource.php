@@ -99,10 +99,9 @@ class Resource extends \VuFind\Db\Table\Resource
                     }
                 }
 
-                // Apply sorting, if necessary:
                 if (!empty($sort)) {
                     if ($sort == 'custom_order') {
-                        Resource::applySort($s, $sort, 'user_resource');
+                        Resource::applySort($s, $sort, 'ur');
                     } else {
                         Resource::applySort($s, $sort);
                     }
@@ -124,19 +123,22 @@ class Resource extends \VuFind\Db\Table\Resource
      */
     public static function applySort($query, $sort, $alias = 'resource')
     {
+        // Apply sorting, if necessary:
         $legalSorts = [
             'custom_order'
         ];
         if (!empty($sort) && in_array(strtolower($sort), $legalSorts)) {
-            $rawField = 'finna_custom_order_index';
+            $rawField = $sort = 'finna_custom_order_index';
 
             $order[] = new Expression(
-                'isnull(?)', ['ur.' . $rawField],
+                'isnull(?)', [$alias . '.' . $rawField],
                 [Expression::TYPE_IDENTIFIER]
             );
 
-            $order[] = 'ur.' . $rawField;
+            // Apply the user-specified sort:
+            $order[] = $alias . '.' . $sort;
 
+            // Inject the sort preferences into the query object:
             $query->order($order);
         } else {
             parent::applySort($query, $sort, $alias);

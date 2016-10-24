@@ -1,5 +1,17 @@
 /*global VuFind*/
 finna.common = (function() {
+
+    var decodeHtml = function(str) {
+        return $("<textarea/>").html(str).text();
+    };
+
+    var getField = function(obj, field) {
+        if (field in obj && typeof obj[field] != 'undefined') {
+            return obj[field];
+        }
+        return null;
+    };
+
     var initSearchInputListener = function() {
         var searchInput = $('.searchForm_lookfor:visible');
         if (searchInput.length == 0) {
@@ -7,6 +19,7 @@ finna.common = (function() {
         }
         $(window).keypress(function(e) {
             if (e && (!$(e.target).is('input, textarea, select')) 
+                  && !$(e.target).hasClass('dropdown-toggle') // Bootstrap dropdown
                   && !$('#modal').is(':visible') 
                   && (e.which >= 48) // Start from normal input keys
                   && !(e.metaKey || e.ctrlKey || e.altKey)
@@ -31,9 +44,11 @@ finna.common = (function() {
                 e.preventDefault();
            }
         });
-    }
+    };
     
     var my = {
+        decodeHtml: decodeHtml,
+        getField: getField,
         init: function() {
             initSearchInputListener();
         }

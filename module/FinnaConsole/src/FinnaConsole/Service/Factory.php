@@ -56,9 +56,8 @@ class Factory
         $renderer = $sm->get('viewmanager')->getRenderer();
         $translator = $sm->get('VuFind\Translator');
 
-        return new AccountExpirationReminders($table,$renderer,$translator,$sm);
+        return new AccountExpirationReminders($table, $renderer, $translator, $sm);
     }
-
 
     /**
      * Construct the console service for clearing expired MetaLib searches.

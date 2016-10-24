@@ -83,12 +83,12 @@ class AccountExpirationReminders extends AbstractService
     /**
      * Constructor
      *
-     * @param Finna\Db\Table\User            $table                User table.
-     * @param Zend\View\Renderer\PhpRenderer $renderer             View renderer.
-     * @param VuFind\Translator              $translator           Translator.
-     * @param ServiceManager                 $serviceManager       Service manager.
+     * @param Finna\Db\Table\User            $table          User table.
+     * @param Zend\View\Renderer\PhpRenderer $renderer       View renderer.
+     * @param VuFind\Translator              $translator     Translator.
+     * @param ServiceManager                 $serviceManager Service manager.
      */
-    public function __construct (
+    public function __construct(
         $table, $renderer, $translator, $serviceManager
     ) {
         $this->table = $table;
@@ -107,10 +107,16 @@ class AccountExpirationReminders extends AbstractService
     public function run($arguments)
     {
         if (!isset($arguments[0])
-            || (int) $arguments[0] < 180 || !isset($arguments[1]) || !isset($arguments[2])) {
-            echo "Usage:\n  php index.php util expiration_reminders <expiration_days> <remind_days_before> <frequency>\n\n"
-                . "  Sends a reminder for those users whose account will expire in <remind__days_before> days\n"
-                . "  Values below 180 are not accepted for <expiration_days> parameter.\n";
+            || (int) $arguments[0] < 180
+            || !isset($arguments[1])
+            || !isset($arguments[2])
+        ) {
+            echo "Usage:\n  php index.php util expiration_reminders "
+                . "<expiration_days> <remind_days_before> <frequency>\n\n"
+                . "  Sends a reminder for those users whose account will expire in "
+                . "<remind__days_before> days\n"
+                . "  Values below 180 are not accepted for "
+                . "<expiration_days> parameter.\n";
             return false;
         }
 
@@ -121,12 +127,14 @@ class AccountExpirationReminders extends AbstractService
         $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
-        $users = $this->getUsersToRemind($expiration_days,$remind_days_before,$frequency);
+        $users = $this->getUsersToRemind(
+            $expiration_days, $remind_days_before, $frequency
+        );
         $count = 0;
 
         foreach ($users as $user) {
             $this->msg("Sending expiration reminder for user " . $user->username);
-            $this->sendAccountExpirationReminder($user,$expiration_days);
+            $this->sendAccountExpirationReminder($user, $expiration_days);
             $count++;
         }
 
@@ -142,20 +150,24 @@ class AccountExpirationReminders extends AbstractService
     /**
      * Returns all users that have not been active for given amount of days.
      *
-     * @param int $days Expiration limit in days for user accounts
-     * @param int $remind_days_before How many days before expiration reminding starts
-     * @param int $frequency What is the freqency in days for reminding the user
+     * @param int $days             Expiration limit in days for user accounts
+     * @param int $remindDaysBefore How many days before expiration reminding starts
+     * @param int $frequency        The freqency in days for reminding the user
      *
      * @return User[] users to remind on expiration
      */
-    protected function getUsersToRemind($days,$remindDaysBefore,$frequency)
+    protected function getUsersToRemind($days, $remindDaysBefore, $frequency)
     {
-        $remindingDaysBegin = array();
-        $remindingDaysEnd = array();
+        $remindingDaysBegin = [];
+        $remindingDaysEnd = [];
 
         for ($x = $remindDaysBefore; $x > 0; $x -= $frequency) {
-            $remindingDaysBegin[] = date('Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days - $x)));
-            $remindingDaysEnd[] = date('Y-m-d 23:59:59', strtotime(sprintf('-%d days', (int) $days - $x)));
+            $remindingDaysBegin[] = date(
+                'Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days - $x))
+            );
+            $remindingDaysEnd[] = date(
+                'Y-m-d 23:59:59', strtotime(sprintf('-%d days', (int) $days - $x))
+            );
         }
       
         $timePeriods = "";
@@ -164,8 +176,10 @@ class AccountExpirationReminders extends AbstractService
             if (strlen($timePeriods) > 0) {
                 $timePeriods .= " OR ";
             }
-            $timePeriods .= "(finna_last_login >= '" . $remindingDaysBegin[$i] . "' AND ";
-            $timePeriods .= "finna_last_login <= '" . $remindingDaysEnd[$i] . "')"; 
+            $timePeriods .= "(finna_last_login >= '"
+                         . $remindingDaysBegin[$i] . "' AND ";
+            $timePeriods .= "finna_last_login <= '"
+                         . $remindingDaysEnd[$i] . "')"; 
         }
 
         return $this->table->select(
@@ -183,7 +197,9 @@ class AccountExpirationReminders extends AbstractService
     /**
      * Send account expiration reminder for a user.
      *
-     * @param \Finna\Db\Table\Row\User $user        User.
+     * @param \Finna\Db\Table\Row\User $user            User.
+     * @param int                      $expiration_days Amount of days when 
+     *                                                  account expires
      *
      * @return boolean success.
      */
@@ -214,15 +230,18 @@ class AccountExpirationReminders extends AbstractService
             ->setLocale($language);
 
 
-        /* TODO & FIX: By default vufind/config.ini does not contain title ($this->currentSiteConfig['Site']['title']) */
+        /* TODO & FIX: By default vufind/config.ini does not 
+           contain title ($this->currentSiteConfig['Site']['title']) */
         $params = [
             'serviceName' => $this->currentSiteConfig['Site']['title'],
             'finna_auth_method' => $user->finna_auth_method,
-            'username' => substr($user->username,1),
+            'username' => substr($user->username, 1),
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'email' => $user->email,
-            'lastLogin' => (new DateTime($user->finna_last_login))->format('d.m.Y H:i:s'),
+            'lastLogin' => (new DateTime(
+                $user->finna_last_login
+            ))->format('d.m.Y H:i:s'),
             'expireDate' =>  $expiration_datetime->format('d.m.Y H:i:s')
         ];
 
@@ -239,7 +258,9 @@ class AccountExpirationReminders extends AbstractService
         $subject = $this->translator->translate('account_exp_subject');
         $subject .= " " . $expiration_datetime->format('d.m.Y');
 
-        $message = $this->renderer->render('Email/account-expiration-reminder.phtml', $params);
+        $message = $this->renderer->render(
+            'Email/account-expiration-reminder.phtml', $params
+        );
 
         try {
             $to = $user->email;
@@ -256,9 +277,6 @@ class AccountExpirationReminders extends AbstractService
             $this->err('   ' . $e->getMessage());
             return false;
         }
-
-        /* TODO: Is there any need for logging this kind of operations */
-
         return true;
     }
 }

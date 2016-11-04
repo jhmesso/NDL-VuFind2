@@ -562,13 +562,23 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      */
     public function saveCustomOrderAction()
     {
+       
         $listID = $this->params()->fromPost('listID');
-        $this->session->url = empty($listID)
-                            ? $this->url()->fromRoute('myresearch-favorites')
-                            : $this->url()->fromRoute('userList', ['id' => $listID]);
-        $controller = 'MyResearch';
-        $action = 'SaveCustomFavoritesOrder';
-        return $this->forwardTo($controller, $action);
+
+        if ($this->formWasSubmitted('save_order')) {
+            $this->session->url = empty($listID)
+                                ? $this->url()->fromRoute('myresearch-favorites')
+                                : $this->url()->fromRoute('userList', ['id' => $listID]);
+            $controller = 'MyResearch';
+            $action = 'SaveCustomFavoritesOrder';
+            return $this->forwardTo($controller, $action);
+        } else {
+            /* TODO: 
+             *       finna-mylist.js needs to be changed so that we
+             *       do just an ordinary submit and redirect user to
+             *       to the favorite list page.
+             */
+        }
     }
 
     /**

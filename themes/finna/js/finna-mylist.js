@@ -367,6 +367,7 @@ finna.myList = (function() {
 		    type: "POST",
 		    url: VuFind.path + "/MyResearch/SaveCustomOrder",
 		    data: { 'orderedList' :  listOfItems,
+			    'save_order' : 1,
 			    'userID' : userID,
 			    'listID' : listID,
 			  }
@@ -381,18 +382,18 @@ finna.myList = (function() {
 		failAction();
 	    }
 	});
-	
+
+	$(".reset_order").click( function() {
+	    reloadFavoritePage();
+	});
+
         var reloadFavoritePage = function() {
-	    if ($('#modal').css('display') != 'none') {
-		if (window.location.href.match(/sort=[\+\w]+$/)) {
-		    window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"");
-		} else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
-		    window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1");
-		} else {
-		    VuFind.refreshPage();
-		}
+	    if (window.location.href.match(/sort=[\+\w]+$/)) {
+		window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"").replace(/\/SortList/,'/MyList');
+	    } else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
+		window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1").replace(/\/SortList/,'/Mylist');
 	    } else {
-		window.location.href = VuFind.path; //TODO: Fix this
+		window.location.href = window.location.href.replace(/\/SortList/,'/MyList');
 	    }
 	}
 

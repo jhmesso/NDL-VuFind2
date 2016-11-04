@@ -566,17 +566,18 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $listID = $this->params()->fromPost('listID');
 
         if ($this->formWasSubmitted('save_order')) {
-            syslog(LOG_INFO,"SAVE ORDER");
             $this->session->url = empty($listID)
                                 ? $this->url()->fromRoute('myresearch-favorites')
-                                : $this->url()->fromRoute('userList', ['id' => $listID]);
+                                : $this->url()->fromRoute(
+                                    'userList', ['id' => $listID]
+                                );
             $controller = 'MyResearch';
             $action = 'SaveCustomFavoritesOrder';
             return $this->forwardTo($controller, $action);
         } else {
-            syslog(LOG_INFO,"DEFAULT");
             return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'MyList']);
+                'default', ['controller' => 'MyResearch', 'action' => 'MyList']
+            );
             // TODO: how to pass parameters
         }
     }
@@ -1003,7 +1004,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
         ) {
             return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'MyList']);
+                'default', ['controller' => 'MyResearch', 'action' => 'MyList']
+            );
             // TODO: how to pass parameters
         } else {
             return false;

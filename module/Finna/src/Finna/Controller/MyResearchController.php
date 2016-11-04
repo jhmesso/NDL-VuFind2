@@ -566,6 +566,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $listID = $this->params()->fromPost('listID');
 
         if ($this->formWasSubmitted('save_order')) {
+            syslog(LOG_INFO,"SAVE ORDER");
             $this->session->url = empty($listID)
                                 ? $this->url()->fromRoute('myresearch-favorites')
                                 : $this->url()->fromRoute('userList', ['id' => $listID]);
@@ -573,11 +574,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $action = 'SaveCustomFavoritesOrder';
             return $this->forwardTo($controller, $action);
         } else {
-            /* TODO: 
-             *       finna-mylist.js needs to be changed so that we
-             *       do just an ordinary submit and redirect user to
-             *       to the favorite list page.
-             */
+            syslog(LOG_INFO,"DEFAULT");
+            return $this->redirect()->toRoute(
+                'default', ['controller' => 'MyResearch', 'action' => 'MyList']);
+            // TODO: how to pass parameters
         }
     }
 
@@ -1002,7 +1002,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && ! empty($orderedList)
             && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
         ) {
-            return true;
+            return $this->redirect()->toRoute(
+                'default', ['controller' => 'MyResearch', 'action' => 'MyList']);
+            // TODO: how to pass parameters
         } else {
             return false;
         }

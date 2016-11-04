@@ -353,49 +353,47 @@ finna.myList = (function() {
 	$('#sortable').sortable({cursor: "move",opacity: 0.7});
 	$('.own-favorite-list-spinner').hide();
 
-	$(".save_order").click( function() {
+	$(".save_order, .reset_order").click( function() {
 	    $('.own-favorite-list-spinner').show();
-	    $('.save_order').hide();
 	    $('.btn-primary').hide();
 
+	    var $this = $(this);
+	    
 	    var userID = $('input[name=user_id]').val();
 	    var listID = $('input[name=list_id]').val();
 	    var listOfItems = $('#sortable').sortable('toArray').toString();
+
+	    var form = document.createElement("form");
+	    var formUserId = document.createElement("input");
+	    formUserId.name = "userID";
+	    formUserId.value = userID;
+
+	    var formListId = document.createElement("input");
+	    formListId.name = "listID";
+	    formListId.value = listID;
+
+	    var formOrderedList = document.createElement("input");
+	    formOrderedList.name = "orderedList";
+	    formOrderedList.value = listOfItems;
+
+	    var formFunction = document.createElement("input");
+	    formFunction.name = $this.hasClass('save_order') ? "save_order" : "reset_order";
+	    formFunction.value = 1;
+
+	    form.method = "POST";
+	    form.action = VuFind.path + "/MyResearch/SaveCustomOrder";
+
+	    form.appendChild(formUserId);
+	    form.appendChild(formListId);
+	    form.appendChild(formOrderedList);
+	    form.appendChild(formFunction);
 	    
 	    if (userID > 0 && listID > 0 && listOfItems.length > 0) {
-		$.ajax({
-		    type: "POST",
-		    url: VuFind.path + "/MyResearch/SaveCustomOrder",
-		    data: { 'orderedList' :  listOfItems,
-			    'save_order' : 1,
-			    'userID' : userID,
-			    'listID' : listID,
-			  }
-		})
-		    .done(function() {
-			reloadFavoritePage();
-		    })
-		    .fail(function() {
-			failAction();
-		    });
+		form.submit();
 	    } else {
 		failAction();
 	    }
 	});
-
-	$(".reset_order").click( function() {
-	    reloadFavoritePage();
-	});
-
-        var reloadFavoritePage = function() {
-	    if (window.location.href.match(/sort=[\+\w]+$/)) {
-		window.location.href = window.location.href.replace(/&*sort=[\+\w]+?$/,"").replace(/\/SortList/,'/MyList');
-	    } else if (window.location.href.match(/sort=[\+\w+]?&(.*)$/)) {
-		window.location.href = window.location.href.replace(/sort=[\+\w]+&(.*)$/,"$1").replace(/\/SortList/,'/Mylist');
-	    } else {
-		window.location.href = window.location.href.replace(/\/SortList/,'/MyList');
-	    }
-	}
 
 	var failAction = function () {
 	    $('#error-message').show();

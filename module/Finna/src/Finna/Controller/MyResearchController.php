@@ -203,7 +203,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             // Redirect anonymous users and list visitors to public list URL
             if ($list && $list->isPublic()
-                && (! $user || $user->id != $list->user_id)
+                && (!$user || $user->id != $list->user_id)
             ) {
                 return $this->redirect()->toRoute('list-page', ['lid' => $list->id]);
             }
@@ -757,7 +757,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $view = parent::mylistAction();
         $user = $this->getUser();
         $table = $this->getTable('UserResource');
-
         
         if (empty($list) && $results = $view->results) {
             $list = $results->getListObject();
@@ -769,7 +768,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             reset($sortOptions);
             $sort = key($sortOptions);
         }
-
         $sortList = [];
 
         if (empty($list)

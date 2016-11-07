@@ -350,7 +350,7 @@ finna.myList = (function() {
     };
 
     var initFavoriteOrderingFunctionality = function() {
-	$('#sortable').sortable({cursor: "move",opacity: 0.7});
+	$('#sortable').sortable({cursor: "move", opacity: 0.7});
 	$('.own-favorite-list-spinner').hide();
 
 	$(".save_order, .reset_order").click( function() {
@@ -364,6 +364,7 @@ finna.myList = (function() {
 	    var listOfItems = $('#sortable').sortable('toArray').toString();
 
 	    var form = document.createElement("form");
+
 	    var formUserId = document.createElement("input");
 	    formUserId.name = "userID";
 	    formUserId.value = userID;

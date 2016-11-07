@@ -80,7 +80,6 @@ class ListController extends \Finna\Controller\MyResearchController
 
             $results->performAndProcessSearch();
             $listObj = $results->getListObject();
-            
             $username = $this->getListUsername($listObj->user_id);
 
             // Special case: If we're in RSS view, we need to render differently:

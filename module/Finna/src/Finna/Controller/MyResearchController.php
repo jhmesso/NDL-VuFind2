@@ -203,7 +203,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             // Redirect anonymous users and list visitors to public list URL
             if ($list && $list->isPublic()
-                && (!$user || $user->id != $list->user_id)
+                && (! $user || $user->id != $list->user_id)
             ) {
                 return $this->redirect()->toRoute('list-page', ['lid' => $list->id]);
             }
@@ -575,10 +575,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $action = 'SaveCustomFavoritesOrder';
             return $this->forwardTo($controller, $action);
         } else {
-            return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'MyList']
-            );
-            // TODO: how to pass parameters
+            return $this->redirect()->toRoute('userList', ['id' => $listID]);
         }
     }
 
@@ -1003,10 +1000,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && ! empty($orderedList)
             && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
         ) {
-            return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'MyList']
-            );
-            // TODO: how to pass parameters
+            return $this->redirect()->toRoute('userList', ['id' => $listID]);
         } else {
             return false;
         }

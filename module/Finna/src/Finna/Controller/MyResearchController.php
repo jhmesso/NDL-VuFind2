@@ -565,8 +565,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
        
         $listID = $this->params()->fromPost('list_id');
 
-        syslog(LOG_INFO,"LIST: $listID / " . $this->params()->fromPost('opcode'));
-        
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {

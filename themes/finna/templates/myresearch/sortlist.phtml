@@ -6,7 +6,7 @@
   $user = $this->auth()->isLoggedIn();
 ?>
 
-<form id="save-custom-order" method="POST" action="<?=$this->url('home') ?>MyResearch/SaveCustomOrder">
+<form method="POST" action="<?=$this->url('home') ?>MyResearch/SaveCustomOrder">
         
 <input type="hidden" name="user_id" value="<?=$user->id ?>">
 <input type="hidden" name="list_id" value="<?=$list->id ?>">

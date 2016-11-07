@@ -6,15 +6,19 @@
   $user = $this->auth()->isLoggedIn();
 ?>
 
+<form id="save-custom-order" method="POST" action="<?=$this->url('home') ?>MyResearch/SaveCustomOrder">
+        
 <input type="hidden" name="user_id" value="<?=$user->id ?>">
 <input type="hidden" name="list_id" value="<?=$list->id ?>">
+<input type="hidden" id="orderedList" name="orderedList" value="">
+<input type="hidden" id="opcode" name="opcode" value="">
 <h2><?=$this->transEsc('Sort manually');?></h2>
   <div class="row">
     <div class="col-xs-12">
       <div class="own-favorite-list-button-area">
         <div class="own-favorite-list-spinner"><div class="fa fa-spinner fa-spin"></div></div>
-        <button type="button" class="save_order btn btn-primary"><?=$this->transEsc('Save Order');?></button>
-        <button type="button" class="reset_order btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
+        <button type="button" id="save_order_btn" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
+        <button type="button" id="reset_order_btn" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
       </div>
     </div>
     <div id="error-message" class="col-xs-12" style="display: none;">
@@ -26,6 +30,7 @@
       <li id="<?=$current->getUniqueID() ?>"><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li> 
     <? endforeach; ?>
   </ol>
+</form>
 <?
   $script = <<<EOT
   finna.myList.initFavoriteOrderingFunctionality();

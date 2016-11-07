@@ -353,44 +353,22 @@ finna.myList = (function() {
 	$('#sortable').sortable({cursor: "move", opacity: 0.7});
 	$('.own-favorite-list-spinner').hide();
 
-	$(".save_order, .reset_order").click( function() {
+	$("#save_order_btn, #reset_order_btn").click( function(event) {
 	    $('.own-favorite-list-spinner').show();
 	    $('.btn-primary').hide();
 
-	    var $this = $(this);
-	    
 	    var userID = $('input[name=user_id]').val();
 	    var listID = $('input[name=list_id]').val();
+
 	    var listOfItems = $('#sortable').sortable('toArray').toString();
+	    $('input[name="orderedList"]').val(listOfItems);
 
-	    var form = document.createElement("form");
-
-	    var formUserId = document.createElement("input");
-	    formUserId.name = "userID";
-	    formUserId.value = userID;
-
-	    var formListId = document.createElement("input");
-	    formListId.name = "listID";
-	    formListId.value = listID;
-
-	    var formOrderedList = document.createElement("input");
-	    formOrderedList.name = "orderedList";
-	    formOrderedList.value = listOfItems;
-
-	    var formFunction = document.createElement("input");
-	    formFunction.name = $this.hasClass('save_order') ? "save_order" : "reset_order";
-	    formFunction.value = 1;
-
-	    form.method = "POST";
-	    form.action = VuFind.path + "/MyResearch/SaveCustomOrder";
-
-	    form.appendChild(formUserId);
-	    form.appendChild(formListId);
-	    form.appendChild(formOrderedList);
-	    form.appendChild(formFunction);
+	    if (event.target.id == "save_order_btn") {
+		$('input[name="opcode"]').val("save_order");
+	    } 
 	    
 	    if (userID > 0 && listID > 0 && listOfItems.length > 0) {
-		form.submit();
+		event.target.form.submit();
 	    } else {
 		failAction();
 	    }

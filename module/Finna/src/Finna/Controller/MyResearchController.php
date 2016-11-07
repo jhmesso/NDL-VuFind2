@@ -563,9 +563,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function saveCustomOrderAction()
     {
        
-        $listID = $this->params()->fromPost('listID');
+        $listID = $this->params()->fromPost('list_id');
 
-        if ($this->formWasSubmitted('save_order')) {
+        syslog(LOG_INFO,"LIST: $listID / " . $this->params()->fromPost('opcode'));
+        
+        if ($this->formWasSubmitted('opcode')
+            && $this->params()->fromPost('opcode') == 'save_order'
+        ) {
             $this->session->url = empty($listID)
                                 ? $this->url()->fromRoute('myresearch-favorites')
                                 : $this->url()->fromRoute(
@@ -990,10 +994,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
-        $listID = $this->params()->fromPost('listID');
+        $listID = $this->params()->fromPost('list_id');
         $orderedList = $this->params()->fromPost('orderedList');
         $table = $this->getTable('UserResource');
-        
+
         if (! empty($listID)
             && ! empty($orderedList)
             && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)

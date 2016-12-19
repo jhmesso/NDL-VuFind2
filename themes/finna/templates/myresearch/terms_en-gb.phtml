@@ -1,3 +1,57 @@
-<p>Finna-palveluun tallennetaan palvelun käyttämisen kannalta tarpeellisia henkilötietojasi, kuten esimerkiksi käyttäjätunnus, kirjastokortin tunnus, PIN-koodi, nimi, sähköpostiosoite ja käyttämäsi kirjastot. Tarkemmat tiedot tallennettavista henkilötiedoista ja niiden käsittelystä  (mukaan lukien Finnaan aineistoja tarjoavat organisaatiot, tietojen luovuttaminen,  ja säilytysajat) löytyvät <a data-lightbox-ignore href="<?=$link?>" target="_blank">Tietosuoja-sivulta</a>.  Mikäli kirjaudut käyttäen jo olemassaolevaa käyttämäsi kirjaston järjestelmässä olevaa tunnusta tai kirjastokorttia, tarvittavat tiedot siirretään automaattisesti kirjaston järjestelmästä Finna-palveluun. Finna-palvelussa sinun on myös mahdollista itse tallentaa ja muuttaa henkilötietojasi. Näitä henkilötietoja käsitellään palvelun toteuttamiseen Kansalliskirjastossa ja CSC:llä (palvelut tuottajat) sekä Finnaan aineistoja tarjoavissa organisaatioissa. Voit peruuttaa antamasi hyväksynnän henkilötietojesi käsittelyyn poistamalla oman tilisi Finna-palvelusta.</p>
-    <p><label><input type="checkbox" name="acceptTerms" value="1" checked="checked" required> Hyväksyn <a data-lightbox-ignore href="<?=$link?>" target="_blank">asiakastietojen käsittelyn</a> Finnassa</p></label>
-    <input type="submit" class="btn btn-primary submit" name="submit" value="Hyväksy">
+<style>
+p {
+   font-size: 15px;
+}
+
+.terms-of-service-title {
+   font-size: 18px;
+}
+
+.terms-of-service-blue-box {
+   background-color: #d8edf8;
+   padding-left: 8px;
+   padding-right: 20px;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   margin-bottom: 20px;
+   min-height: 100px;
+}
+
+.terms-of-service-footnote {
+   font-size: 14px;
+}
+
+.terms-of-service-logo {
+   width: 77px;
+   height: 78px;
+   margin-bottom: 20px;
+   margin-right: 10px;
+   float: left;
+}
+
+.terms-of-service-text {
+   margin-left: 40px;
+}
+
+</style>
+
+<div class="terms-of-service-blue-box">
+  <div class="terms-of-service-logo"><img src="<?= $this->url('home'); ?>themes/finna/images/finna-logo-icon.png"></div>
+     <div class="terms-of-service-text"><p>You are logging on to Finna or to a service built on the Finna platform, such as an online library. Finna is an entity designed to provide search services for Finnish libraries, archives, and museums.</p></div>
+</div>
+          
+
+<p class="terms-of-service-title">We respect your privacy on Finna!</p>
+
+<p>We only collect the personal information necessary to use Finna, like your name, email address, username, library barcode, PIN code, and the libraries you use. To find out more about the personal information we collect and how it is treated, including how your information is shared and how long it is stored, please go to our <a href="<?= $this->url('home'); ?>/Content/terms_conditions">Privacy & terms page</a>.</p>
+
+<p>If you log into Finna using an already existing username or library card, the necessary information will be automatically transferred from the library’s system to Finna. You may also save and change your personal information on Finna. To provide you with our service, your information is collected and managed by the National Library of Finland and the CSC – IT Center for Science (the service providers) and the <a href="https://finna.fi/Content/organisations">organizations</a> that share their collections on Finna.</p>
+
+<p>Using this form, you can reject our privacy policy and permanently remove your information from Finna by deleting your account.</p>
+
+<div class="terms-of-service-blue-box terms-of-service-footnote">
+<p>You may need to accept Finna’s privacy policy again if you log on to Finna from a different device or browser, have deleted your browsing history, or log on to a Finna website you haven’t used before</p>
+</div>
+
+<p><label><input type="checkbox" name="acceptTerms" value="1" checked="checked" required>I accept the storage and management of my personal information on Finna.</label></p>
+<input type="submit" class="btn btn-primary submit" name="submit" value="Accept">

@@ -1,3 +1,57 @@
-<p>Finna-palveluun tallennetaan palvelun käyttämisen kannalta tarpeellisia henkilötietojasi, kuten esimerkiksi käyttäjätunnus, kirjastokortin tunnus, PIN-koodi, nimi, sähköpostiosoite ja käyttämäsi kirjastot. Tarkemmat tiedot tallennettavista henkilötiedoista ja niiden käsittelystä  (mukaan lukien Finnaan aineistoja tarjoavat organisaatiot, tietojen luovuttaminen,  ja säilytysajat) löytyvät <a data-lightbox-ignore href="<?=$link?>" target="_blank">Tietosuoja-sivulta</a>.  Mikäli kirjaudut käyttäen jo olemassaolevaa käyttämäsi kirjaston järjestelmässä olevaa tunnusta tai kirjastokorttia, tarvittavat tiedot siirretään automaattisesti kirjaston järjestelmästä Finna-palveluun. Finna-palvelussa sinun on myös mahdollista itse tallentaa ja muuttaa henkilötietojasi. Näitä henkilötietoja käsitellään palvelun toteuttamiseen Kansalliskirjastossa ja CSC:llä (palvelut tuottajat) sekä Finnaan aineistoja tarjoavissa organisaatioissa. Voit peruuttaa antamasi hyväksynnän henkilötietojesi käsittelyyn poistamalla oman tilisi Finna-palvelusta.</p>
-    <p><label><input type="checkbox" name="acceptTerms" value="1" checked="checked" required> Hyväksyn <a data-lightbox-ignore href="<?=$link?>" target="_blank">asiakastietojen käsittelyn</a> Finnassa</p></label>
-    <input type="submit" class="btn btn-primary submit" name="submit" value="Hyväksy">
+<style>
+p {
+   font-size: 15px;
+}
+
+.terms-of-service-title {
+   font-size: 18px;
+}
+
+.terms-of-service-blue-box {
+   background-color: #d8edf8;
+   padding-left: 8px;
+   padding-right: 20px;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   margin-bottom: 20px;
+   min-height: 100px;
+}
+
+.terms-of-service-footnote {
+   font-size: 14px;
+}
+
+.terms-of-service-logo {
+   width: 77px;
+   height: 78px;
+   margin-bottom: 20px;
+   margin-right: 10px;
+   float: left;
+}
+
+.terms-of-service-text {
+   margin-left: 40px;
+}
+
+</style>
+
+<div class="terms-of-service-blue-box">
+  <div class="terms-of-service-logo"><img src="<?= $this->url('home'); ?>themes/finna/images/finna-logo-icon.png"></div>
+  <div class="terms-of-service-text"><p>Olet kirjautumassa Finnaan tai Finna-alustalle rakennettuun palveluun, kuten verkkokirjastoon. Finna on kokonaisuus, jolla on toteutettu kirjastojen, arkistojen ja museoiden hakupalveluita.</p></div>
+</div>
+          
+
+<p class="terms-of-service-title">Yksityisyyttäsi kunnioitetaan Finnassa!</p>
+
+<p>Palveluun tallennetaan vain sen toteuttamisen kannalta tarpeellisia henkilötietojasi, kuten nimi, sähköpostiosoite, käyttäjätunnus, kirjastokortin tunnus, PIN-koodi ja käyttämäsi kirjastot. Tarkemmat tiedot tallennettavista henkilötiedoista ja niiden käsittelystä, mukaan lukien tietojen luovuttaminen ja säilytysajat, löytyvät <a href="<?= $this->url('home'); ?>/Content/terms_conditions">Tietosuoja-sivulta</a>.</p>
+
+<p>Jos kirjaudut palveluun käyttäen jo olemassa olevaa käyttämäsi kirjaston järjestelmässä olevaa tunnusta tai kirjastokorttia, tarvittavat tiedot siirretään automaattisesti kirjaston järjestelmästä Finna-palveluun. Finna-palvelussa sinun on myös mahdollista itse tallentaa ja muuttaa henkilötietojasi. Henkilötietoja käsitellään palvelun toteuttamiseen Kansalliskirjastossa ja CSC – Tieteen tietotekniikan keskus Oy:ssä (palvelut tuottajat) sekä Finnaan aineistoja tarjoavissa <a href="https://finna.fi/Content/organisations">organisaatioissa</a>.</p>
+
+<p>Voit peruuttaa tällä lomakkeella antamasi hyväksynnän henkilötietojesi käsittelyyn ja poistaa tietosi Finnasta poistamalla tilisi palvelusta.</p>
+
+<div class="terms-of-service-blue-box terms-of-service-footnote">
+<p>Voit joutua hyväksymään henkilötietojesi käsittelyn Finnassa uudelleen, mikäli kirjaudut palveluun eri laitteella tai selaimella kuin aiemmin tai olet tyhjentänyt selainhistoriasi tai kirjaudut Finna-sivustoon, jota et ole käyttänyt aikaisemmin.</p>
+</div>
+
+<p><label><input type="checkbox" name="acceptTerms" value="1" checked="checked" required> Hyväksyn henkilötietojeni tallentamisen ja käsittelyn Finna-palvelussa.</label></p>
+<input type="submit" class="btn btn-primary submit" name="submit" value="Hyväksy">

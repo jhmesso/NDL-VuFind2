@@ -163,7 +163,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             $building = $building[0];
         }
 
-        if (preg_match('/^0\/([a-zA-z0-9]*)\/$/', $building, $matches)) {
+        if (preg_match('/^0\/([^\/]*)\/$/', $building, $matches)) {
             // strip leading '0/' and trailing '/' from top-level building code
             return $matches[1];
         }
@@ -262,7 +262,8 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
         if ($action == 'lookup') {
             $link = $params['link'];
-            return $this->lookupAction($parent, $link);
+            $parentName = $params['parentName'];
+            return $this->lookupAction($parent, $link, $parentName);
         } elseif ($action == 'consortium') {
             $response = $this->consortiumAction(
                 $parent, $buildings, $target, $startDate, $endDate, $params
@@ -294,14 +295,15 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
      * Check if consortium is found in Kirjastohakemisto and output
      * a link to the organisation page.
      *
-     * @param string  $parent Consortium Finna ID in Kirjastohakemisto.
-     * Use a comma delimited string to check multiple Finna IDs.
-     * @param boolean $link   True to render the link as a html-snippet.
-     * Oherwise only the link URL is outputted.
+     * @param string  $parent     Consortium Finna ID in Kirjastohakemisto.
+     *   Use a comma delimited string to check multiple Finna IDs.
+     * @param boolean $link       True to render the link as a html-snippet.
+     *   Oherwise only the link URL is outputted.
+     * @param string  $parentName Translated consortium display name.
      *
      * @return array Array with the keys 'success' and 'items'.
      */
-    protected function lookupAction($parent, $link = false)
+    protected function lookupAction($parent, $link = false, $parentName = null)
     {
         // Check if consortium is found in Kirjastohakemisto
         $parents = explode(',', $parent);
@@ -328,9 +330,22 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             $id = $item['finna']['finna_id'];
             $data = "{$url}?" . http_build_query(['id' => $id]);
             if ($link) {
+                $logo = null;
+                if (isset($response['items'][0]['logo'])) {
+                    $logos = $response['items'][0]['logo'];
+                    foreach (['small', 'medium'] as $size) {
+                        if (isset($logos[$size])) {
+                            $logo = $logos[$size];
+                            break;
+                        }
+                    }
+                }
+
                 $data = $this->viewRenderer->partial(
-                    'Helpers/organisation-page-link.phtml',
-                    ['url' => $data, 'label' => 'organisation_info_link']
+                    'Helpers/organisation-page-link.phtml', [
+                       'url' => $data, 'label' => 'organisation_info_link',
+                       'logo' => $logo, 'name' => $parentName
+                    ]
                 );
             }
             $result['items'][$id] = $data;
@@ -710,6 +725,9 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
             $data['openTimes'] = $this->parseSchedules($item['schedules']);
 
+            $data['openNow'] = isset($data['openTimes']['openNow'])
+                ? $data['openTimes']['openNow'] : false
+            ;
             $result[] = $data;
         }
         usort($result, [$this, 'sortList']);
@@ -808,7 +826,11 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
                     }
                 }
                 if ($includeAllServices) {
-                    $data = [$this->getField($service, 'name')];
+                    $name = $this->getField($service, 'custom_name');
+                    if (!$name) {
+                        $name = $this->getField($service, 'name');
+                    }
+                    $data = [$name];
                     $desc = $this->getField($service, 'short_description');
                     if ($desc) {
                         $data[] = $desc;
@@ -880,7 +902,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             'friday', 'saturday', 'sunday'
         ];
 
-        $openNow = false;
+        $openNow = null;
         $openToday = false;
         $currentWeek = false;
         foreach ($data as $day) {
@@ -924,8 +946,8 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             if (!empty($day['sections']['selfservice']['times'])) {
                 foreach ($day['sections']['selfservice']['times'] as $time) {
                     $res = $this->extractDayTime($now, $time, $today, true);
-                    if (!empty($res['openNow'])) {
-                        $openNow = true;
+                    if (isset($res['openNow'])) {
+                        $openNow = $res['openNow'];
                     }
                     if (empty($day['times'])) {
                         $res['result']['selfserviceOnly'] = true;
@@ -941,8 +963,8 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             // Staff times
             foreach ($day['times'] as $time) {
                 $res = $this->extractDayTime($now, $time, $today);
-                if (!empty($res['openNow'])) {
-                    $openNow = true;
+                if (isset($res['openNow'])) {
+                    $openNow = $res['openNow'];
                 }
                 if (!empty($info)) {
                     $res['result']['info'] = $info;
@@ -984,7 +1006,11 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             }
         }
 
-        return compact('schedules', 'openNow', 'openToday', 'currentWeek');
+        $result = compact('schedules', 'openToday', 'currentWeek');
+        if ($openNow !== null) {
+            $result['openNow'] = $openNow;
+        }
+        return $result;
     }
 
     /**
@@ -1018,7 +1044,11 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
                 $result['openNow'] = true;
             }
         }
-        return compact('result', 'openNow');
+        $result = ['result' => $result];
+        if ($today) {
+            $result['openNow'] = $openNow;
+        }
+        return $result;
     }
 
     /**

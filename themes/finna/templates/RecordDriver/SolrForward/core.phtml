@@ -2,9 +2,9 @@
 <?
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');  
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?> col-sm-3 col-md-2">
+  <div class="media-<?=$thumbnailAlignment ?> col-sm-4">
     <div class="row">
       <div class="col-xs-12 image-information">
         <div class="cover-wrapper">
@@ -25,6 +25,34 @@
       <?=$this->record($this->driver)->getPreviews()?>
       </div>
     </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <? if ($rights = $this->driver->getImageRights($this->layout()->userLang)): ?>
+          <div class="access-rights">
+            <div class="image-rights">
+              <? $hasLink = isset($rights['link']); ?>
+              <strong><?= $this->transEsc('Image Rights') ?>:</strong> <? if (isset($rights['copyright'])) : ?><? if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><? endif; ?><?= $this->transEsc($rights['copyright']) ?><? if ($hasLink): ?></a><? endif ?><? endif ?>
+            </div>
+            <div class="copyright truncate-field">
+              <? if (isset($rights['description'])): ?>
+                <? foreach ($rights['description'] as $item): ?>
+                <p><?= $this->transEsc($item) ?></p>
+                <? endforeach ?>
+              <? endif ?>
+              <? if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
+                <p><?= $this->transEsc('Image Rights Default') ?>
+                <p><a href="<?= $this->url('content-page', ['page' => 'terms_conditions']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?= $this->translate('See also terms and conditions') ?></a>
+              <? endif; ?>
+            </div>
+          </div>
+        <? endif; ?>
+      </div>
+    </div>
+
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+      <?=$this->render('record/record-organisation-menu.phtml') ?>
+    <? endif; ?>
+
     <div class="row record-rating">
       <div class="col-xs-12 rating-stars">
         <div onclick="$('a.usercomments').click();">
@@ -47,7 +75,7 @@
   <? if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <? endif; ?>
-  <div class="media-body col-sm-9 col-md-10 record-information">
+  <div class="media-body col-sm-8 record-information">
     <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getShortTitle())?><? if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><? endif; ?></h1>
     <? if ($results = $this->driver->getAlternativeTitles()): ?>
       <div class="recordAltTitles record-alt-titles">
@@ -64,20 +92,7 @@
 
     <?
       $formats = $this->driver->getFormats();
-      $metalib = $this->metalib()->isAvailable() && !empty($formats) && strstr((string)$formats[0], '0/Database') !== false;
     ?>
-    <? if ($metalib): ?>
-       <? $this->headScript()->appendFile("finna-metalib-links.js"); ?>
-       <?= $this->partial('RecordDriver/MetaLib/search-link.phtml', ['id' => $this->driver->getUniqueID()]); ?>
-       <?
-       $script = '
-       $(document).ready(function() {
-          finna.metalibLinks.init();
-       });';
-       ?>
-       <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
-    <? endif; ?>
-
     <?
       $openUrl = $this->openUrl($this->driver, 'record');
       $openUrlActive = $openUrl->isActive();
@@ -85,7 +100,7 @@
       $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     ?>
     <? $onlineURLs = $this->driver->getOnlineURLs(); $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
-    <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls']) || strncmp($this->driver->getUniqueID(), 'metalib_', 8) == 0): ?>
+    <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
       <div class="recordURLs local-available-online-record">
         <div class="truncate-field">
           <? $renderedURLs = []; ?>
@@ -102,13 +117,13 @@
                   }
                 }
               ?>
-              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?></a></div>
+              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?></a></div>
             <? endforeach; ?>
           <? endif; ?>
           <? if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
             <? foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
               <? if (in_array($url['url'], $renderedURLs)) { continue; } ?>
-              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
               <? if ($url['source']): ?>
                 <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
               <? endif; ?>
@@ -125,7 +140,7 @@
     <div class="record-authors" property="author">
       <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
         <span class="recordFormat">
-          <?=$this->record($this->driver)->getFormatList()?><br>
+          <?=$this->record($this->driver)->getFormatList() ?> <?=$this->escapeHtml($this->driver->getType()) ?><br>
         </span>
       <? endif; ?>
       <? $results = $this->driver->getNonPresenterAuthors(); $containerTitle = $this->driver->getContainerTitle(); ?>
@@ -177,6 +192,16 @@
       <? endif; ?>
     </div>
 
+    <? if ($result = $this->driver->getSummary()): ?>
+      <div class="description recordSummary">
+        <div class="truncate-field">
+          <? foreach ($result as $item): ?>
+            <p><?=$item // intentionally left unescaped due to embedded HTML ?></p>
+          <? endforeach; ?>
+        </div>
+      </div>
+    <? endif; ?>
+
     <? if ($this->userlist()->getMode() !== 'disabled'): ?>
       <? /* Display the lists that this record is saved to */ ?>
       <div class="savedLists hidden alert alert-info" id="savedLists">
@@ -187,6 +212,13 @@
     <?/* Display Main Details */?>
     <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;">
       <tbody>
+      <? if ($originalWork = $this->driver->getOriginalWork()): ?>
+      <tr class="recordOriginalWork">
+        <th><?=$this->transEsc('Original Work')?>: </th>
+        <td><?=$originalWork // intentionally left unescaped due to embedded HTML ?></td>
+      </tr>
+      <? endif; ?>
+
       <? $nextTitles = $this->driver->getNewerTitles(); $prevTitles = $this->driver->getPreviousTitles(); ?>
       <? if (!empty($nextTitles)): ?>
       <tr class="recordNextTitles">
@@ -236,13 +268,6 @@
       <? if ($result = $this->driver->getCountry()): ?>
         <tr class="record-country">
           <th><?=$this->transEsc('Country') ?>: </th>
-          <td><?=$this->escapeHtml($result) ?></td>
-        </tr>
-      <? endif; ?>
-
-      <? if ($result = $this->driver->getType()): ?>
-        <tr class="record-type">
-          <th><?=$this->transEsc('Type') ?>: </th>
           <td><?=$this->escapeHtml($result) ?></td>
         </tr>
       <? endif; ?>
@@ -312,7 +337,7 @@
           <th><?=$this->transEsc('Item Description')?>: </th>
           <td>
             <? foreach ($notes as $field): ?>
-              <?=$this->escapeHtml($field)?><br/>
+              <?=$field // intentionally left unescaped due to embedded HTML?><br/>
             <? endforeach; ?>
           </td>
         </tr>
@@ -322,7 +347,7 @@
         <? $contentDisplayed = true; ?>
         <tr class="recordDescription">
           <th><?=$this->transEsc('Description') ?>: </th>
-          <td><?=$result // intentionally left unescaped due to embedded HTML ?></td>
+          <td><?=implode('<br/>', $result); // intentionally left unescaped due to embedded HTML ?></td>
         </tr>
       <? endif; ?>
 
@@ -433,8 +458,7 @@
             <? foreach ($subjects as $field): ?>
             <div class="subjectLine" property="keywords">
               <? $subject = ''; ?>
-              <? if(count($field) == 1) $field = explode('--', $field[0]); ?>
-              <? $i = 0; foreach ($field as $subfield): ?>
+               <? $i = 0; foreach ($field as $subfield): ?>
                 <?=($i++ == 0) ? '' : ' &#8594; '?>
                 <? $subject = trim($subject . ' ' . $subfield); ?>
                 <a class="backlink" title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>" rel="nofollow"><?=trim($this->escapeHtml($subfield))?></a>
@@ -609,7 +633,7 @@
           <th><?=$this->transEsc('Awards')?>: </th>
           <td>
             <? foreach ($awards as $field): ?>
-              <?=$this->escapeHtml($field)?><br/>
+              <?=$field // intentionally left unescaped due to embedded HTML ?><br/>
             <? endforeach; ?>
           </td>
         </tr>

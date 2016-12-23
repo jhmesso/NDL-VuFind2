@@ -304,7 +304,7 @@ finna.organisationInfoPage = (function() {
                 $.each(links, function(ind, obj) {
                     if (obj.name == 'Facebook') {
                         var btn = holder.find('.social-button');
-                        btn.find('> a').attr('href', links[0]['url']);
+                        btn.find('> a').attr('href', obj['url']);
                         btn.show();
                     }
                 });
@@ -331,7 +331,7 @@ finna.organisationInfoPage = (function() {
             && data.openTimes.schedules.length > 0;
 
         if (hasSchedules) {
-            holder.find('.open-or-closed > span.library-is-' + (data.openTimes.openNow ? 'open' : 'closed')).show();
+            holder.find('.open-or-closed > span.library-is-' + (data.openNow ? 'open' : 'closed')).show();
         }
 
         var img = holder.find('.building-image');

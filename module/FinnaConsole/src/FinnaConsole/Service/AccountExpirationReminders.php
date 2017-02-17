@@ -117,8 +117,8 @@ class AccountExpirationReminders extends AbstractService
                 . "<remind__days_before> days\n"
                 . "  Values below 180 are not accepted for "
                 . "<expiration_days> parameter.\n"
-                . "<frequency> value defines how often in days "
-                . "the user will be reminded.\n"
+                . "  <frequency> value defines how often in days "
+                . "the user will be reminded.\n";
             return false;
         }
 

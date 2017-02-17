@@ -231,7 +231,6 @@ class AccountExpirationReminders extends AbstractService
             ->setLocale($language);
 
         $params = [
-            'serviceName' => 'Pitää selvittää vai pitääkö, jos käyttäjälle annetaan kuitenkin linkki oikean näkymän asiakastoimintoihin',
             'finna_auth_method' => $user->finna_auth_method,
             'username' => substr($user->username, 1),
             'firstname' => $user->firstname,

@@ -50,6 +50,13 @@ class AccountExpirationReminders extends AbstractService
 {
 
     /**
+     * Current view local configuration directory.
+     *
+     * @var string
+     */
+    protected $baseDir = null;
+
+    /**
      * View renderer
      *
      * @var Zend\View\Renderer\PhpRenderer
@@ -106,37 +113,29 @@ class AccountExpirationReminders extends AbstractService
      */
     public function run($arguments)
     {
-        if (!isset($arguments[0])
-            || (int) $arguments[0] < 180
-            || !isset($arguments[1])
-            || !isset($arguments[2])
+        if (count($arguments) < 4 
+            || (int) $arguments[1] < 180
         ) {
-            echo "Usage:\n  php index.php util expiration_reminders "
-                . "<expiration_days> <remind_days_before> <frequency>\n\n"
-                . "  Sends a reminder for those users whose account will expire in "
-                . "<remind__days_before> days\n"
-                . "  Values below 180 are not accepted for "
-                . "<expiration_days> parameter.\n"
-                . "  <frequency> value defines how often in days "
-                . "the user will be reminded.\n";
+            $this->msg($this->getUsage());
             return false;
         }
 
-        $expiration_days = $arguments[0];
-        $remind_days_before = $arguments[1];
-        $frequency = $arguments[2];
+        if (! $this->collectScriptArguments($arguments)) {
+            $this->msg($this->getUsage());
+            return false;
+        }
 
         $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind(
-            $expiration_days, $remind_days_before, $frequency
+            $this->expirationDays, $this->remindDaysBefore, $this->remindingFrequency
         );
         $count = 0;
 
         foreach ($users as $user) {
             $this->msg("Sending expiration reminder for user " . $user->username);
-            $this->sendAccountExpirationReminder($user, $expiration_days);
+            $this->sendAccountExpirationReminder($user, $this->expirationDays);
             $count++;
         }
 
@@ -245,7 +244,7 @@ class AccountExpirationReminders extends AbstractService
         ];
 
         $templateDirs = [
-            getenv('VUFIND_LOCAL_DIR') . "/../themes/finna/templates",
+            "{$this->baseDir}/themes/finna/templates"
         ];
 
         $resolver = new AggregateResolver();
@@ -277,4 +276,61 @@ class AccountExpirationReminders extends AbstractService
         }
         return true;
     }
+
+    /**
+     * Collect command line arguments.
+     *
+     * @param array $arguments Arguments
+     *
+     * @return void
+     */
+    protected function collectScriptArguments($arguments)
+    {
+        // Current view local configuration directory
+        $this->baseDir = isset($arguments[0]) ? $arguments[0] : false;
+        // Inactive user account will expire in expirationDays days
+        $this->expirationDays = (isset($arguments[1])
+                                  && $arguments[1] >= 180) ? $arguments[1] : false;
+        // Start reminding remindDaysBefore before expiration
+        $this->remindDaysBefore = (isset($arguments[2]) &&
+                                   $arguments[2] > 0) ? $arguments[2] : false;
+        // Remind between remindingFrequency days when reminding period has started
+        $this->remindingFrequency = (isset($arguments[3])
+                                     && $arguments[3] > 0) ? $arguments[3] : false;
+        if (!$this->baseDir
+            || !$this->expirationDays
+            || !$this->remindDaysBefore
+            || !$this->remindingFrequency
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+            
+    }
+
+    /**
+     * Get usage information.
+     *
+     * @return string
+     */
+    protected function getUsage()
+    {
+        // @codingStandardsIgnoreStart
+        return <<<EOT
+Usage:
+  php index.php util expiration_reminders <vufind_dir> <expiration_days> <remind_days_before> <frequency>
+
+  Sends a reminder for those users whose account will expire in <remind_days_before> days.
+    vufind_dir          VuFind base installation directory
+    expiration_days     After how many inactive days a user account will expire.
+                        Values less than 180 are not valid.
+    remind_days_before  Begin reminding the user x days before the actual expiration
+    frequency           How often (in days) the user will be reminded
+
+EOT;
+// @codingStandardsIgnoreEnd
+    }
+
+
 }

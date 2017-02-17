@@ -94,7 +94,7 @@ class AccountExpirationReminders extends AbstractService
         $this->table = $table;
         $this->renderer = $renderer;
         $this->translator = $translator;
-        $this->serviceManager = $serviceManager; 
+        $this->serviceManager = $serviceManager;
     }
 
     /**
@@ -225,15 +225,13 @@ class AccountExpirationReminders extends AbstractService
         ) {
             $language = $user->finna_language;
         }
+        
         $this->translator
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
-
-        /* TODO & FIX: By default vufind/config.ini does not 
-           contain title ($this->currentSiteConfig['Site']['title']) */
         $params = [
-            'serviceName' => $this->currentSiteConfig['Site']['title'],
+            'serviceName' => 'Pitää selvittää vai pitääkö, jos käyttäjälle annetaan kuitenkin linkki oikean näkymän asiakastoimintoihin',
             'finna_auth_method' => $user->finna_auth_method,
             'username' => substr($user->username, 1),
             'firstname' => $user->firstname,
@@ -241,11 +239,10 @@ class AccountExpirationReminders extends AbstractService
             'email' => $user->email,
             'lastLogin' => (new DateTime(
                 $user->finna_last_login
-            ))->format('d.m.Y H:i:s'),
-            'expireDate' =>  $expiration_datetime->format('d.m.Y H:i:s')
+            ))->format('d.m.Y H:i'),
+            'expireDate' =>  $expiration_datetime->format('d.m.Y')
         ];
 
-        /* TODO & FIX: Find a way to solve the root directory smarter */
         $templateDirs = [
             getenv('VUFIND_LOCAL_DIR') . "/../themes/finna/templates",
         ];

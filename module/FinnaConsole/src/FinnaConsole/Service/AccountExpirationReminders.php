@@ -116,7 +116,9 @@ class AccountExpirationReminders extends AbstractService
                 . "  Sends a reminder for those users whose account will expire in "
                 . "<remind__days_before> days\n"
                 . "  Values below 180 are not accepted for "
-                . "<expiration_days> parameter.\n";
+                . "<expiration_days> parameter.\n"
+                . "<frequency> value defines how often in days "
+                . "the user will be reminded.\n"
             return false;
         }
 
@@ -150,8 +152,8 @@ class AccountExpirationReminders extends AbstractService
     /**
      * Returns all users that have not been active for given amount of days.
      *
-     * @param int $days             Expiration limit in days for user accounts
-     * @param int $remindDaysBefore How many days before expiration reminding starts
+     * @param int $days             Expiration limit (in days) for user accounts
+     * @param int $remindDaysBefore How many days before expiration reminder starts
      * @param int $frequency        The freqency in days for reminding the user
      *
      * @return User[] users to remind on expiration
@@ -173,7 +175,7 @@ class AccountExpirationReminders extends AbstractService
         $timePeriods = "";
 
         for ($i = 0; $i < count($remindingDaysBegin); $i++) {
-            if (strlen($timePeriods) > 0) {
+            if (! empty($timePeriods)) {
                 $timePeriods .= " OR ";
             }
             $timePeriods .= "(finna_last_login >= '"

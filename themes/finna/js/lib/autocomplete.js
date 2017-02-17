@@ -9,15 +9,20 @@
  */
 (function ( $ ) {
     var xhr = false;
+    var searchTimer = false;
+
+    // Disable original autocomplete by providing just a stub function instead
+    $.fn.autocomplete = function(settings) {
+    };
 
     $.fn.autocompleteFinna = function(settings) {
         var options = $.extend( {}, $.fn.autocompleteFinna.options, settings );
 
-        // Use input position from setup or focus event with IE Mobile to avoid 
+        // Use input position from setup or focus event with IE Mobile to avoid
         // trouble with changing offset of the input field when the keyboard is
         // displayed (IE Mobile does something quite weird here).
-        var autocompleteTop = 0; 
-        
+        var autocompleteTop = 0;
+
         function align(input, element) {
             var position = input.offset();
             var iemobile = navigator.userAgent.match(/iemobile/i);
@@ -38,9 +43,6 @@
             var element = $.fn.autocompleteFinna.element;
             element.find('.item').removeClass('selected');
             $.fn.autocompleteFinna.element.addClass(options.hidingClass);
-            if (xhr) {
-                xhr.abort();
-            }
         }
 
         function populate(item, input, eventType) {
@@ -82,8 +84,13 @@
                     // escape term for regex
                     // https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
                     var escapedTerm = input.val().replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
+                    // Get the search terms as html
+                    escapedTerm = $('<div/>').text(escapedTerm).html();
                     var regex = new RegExp('('+escapedTerm+')', 'ig');
                     content = content.replace(regex, '<b>$1</b>');
+                } else {
+                    // Get the search terms as html
+                    content = $('<div/>').text(content).html();
                 }
                 var item = $('<div/>');
 
@@ -145,46 +152,57 @@
         }
 
         function search(input, element) {
-            if (xhr) { xhr.abort(); }
+            if (searchTimer) { clearInterval(searchTimer); }
             if (input.val().length >= options.minLength) {
                 element.html('<i class="item loading">'+options.loadingString+'</i>');
                 show();
                 align(input, $.fn.autocompleteFinna.element);
-                var term = [];
-                term.push(input.val());
-                term.push(getSearchHandler(input));
-                term.push(getPreserveFiltersMode(input) ? "1" : "0");
-                term.push(getPreserveFiltersMode(input) ? "1" : "0");
-                term = term.join('###');
-                var cid = input.data('cache-id');
-                if (options.cache && typeof $.fn.autocompleteFinna.cache[cid][term] !== "undefined") {
-                    if ($.fn.autocompleteFinna.cache[cid][term].length === 0) {
-                        hide();
-                    } else {
-                        createList($.fn.autocompleteFinna.cache[cid][term], input, element);
-                    }
-                } else if (typeof options.handler !== "undefined") {
-                    options.handler(input.val(), function(data) {
-                        if (data.length === 0 && options.suggestions) {
-                            hide();
-                        } else {
-                            var searcher = extractClassParams(input);
-                            var filters = handlers = phrase = null;
-                            if (!("onlySuggestions" in searcher) || searcher['onlySuggestions'] != '1') {
-                                filters = "filters" in searcher ? searcher['filters'] : null;
-                            }
-                            handlers = "handlers" in searcher ? searcher['handlers'] : null;
-                            phrase = "phrase" in searcher ? searcher['phrase'] : null;
-
-                            data = parseResponse(data, filters, handlers, phrase);
-                            createList(data, input, element);
+                searchTimer = setInterval(
+                    function() {
+                        if (xhr && (xhr === true || xhr.state() === 'pending')) {
+                            return;
                         }
-                        $.fn.autocompleteFinna.cache[cid][term] = data;
-                    });
-                } else {
-                    console.error('handler function not provided for autocomplete');
-                }
-                input.data('selected', -1);
+                        clearInterval(searchTimer);
+
+                        var term = [];
+                        term.push(input.val());
+                        term.push(getSearchHandler(input));
+                        term.push(getPreserveFiltersMode(input) ? "1" : "0");
+                        term.push(getPreserveFiltersMode(input) ? "1" : "0");
+                        term = term.join('###');
+                        var cid = input.data('cache-id');
+                        if (options.cache && typeof $.fn.autocompleteFinna.cache[cid][term] !== "undefined") {
+                            if ($.fn.autocompleteFinna.cache[cid][term].length === 0) {
+                                hide();
+                            } else {
+                                createList($.fn.autocompleteFinna.cache[cid][term], input, element);
+                            }
+                        } else if (typeof options.handler !== "undefined") {
+                            xhr = true;
+                            options.handler(input.val(), function(data) {
+                                if (data.length === 0 && options.suggestions) {
+                                    hide();
+                                } else {
+                                    var searcher = extractClassParams(input);
+                                    var filters = handlers = phrase = null;
+                                    if (!("onlySuggestions" in searcher) || searcher['onlySuggestions'] != '1') {
+                                        filters = "filters" in searcher ? searcher['filters'] : null;
+                                    }
+                                    handlers = "handlers" in searcher ? searcher['handlers'] : null;
+                                    phrase = "phrase" in searcher ? searcher['phrase'] : null;
+
+                                    data = parseResponse(data, filters, handlers, phrase);
+                                    createList(data, input, element);
+                                }
+                                $.fn.autocompleteFinna.cache[cid][term] = data;
+                            });
+                        } else {
+                            console.error('handler function not provided for autocomplete');
+                        }
+                        input.data('selected', -1);
+                    },
+                    $.fn.autocompleteFinna.options.ajaxDelay
+                );
             } else {
                 hide();
             }
@@ -262,9 +280,9 @@
             }
             return form.find('.applied-filter[name=type]').val();
         };
-        
+
         function updateAutocompleteTop(input) {
-            autocompleteTop = input.offset().top + input.outerHeight();            
+            autocompleteTop = input.offset().top + input.outerHeight();
         }
 
         function setup(input, element) {
@@ -437,7 +455,7 @@
         $.fn.autocompleteFinna.cache = {};
         $.fn.autocompleteFinna.element = false;
         $.fn.autocompleteFinna.options = {
-            ajaxDelay: 200,
+            ajaxDelay: 500,
             cache: true,
             hidingClass: 'hidden',
             highlight: true,
@@ -446,12 +464,11 @@
             suggestions: true
         };
         $.fn.autocompleteFinna.ajax = function(ops) {
-            if (timer) clearTimeout(timer);
-            if (xhr) { xhr.abort(); }
-            timer = setTimeout(
-                function() { xhr = $.ajax(ops); },
-                $.fn.autocompleteFinna.options.ajaxDelay
-            );
+            if (xhr && xhr !== true) {
+                xhr.abort();
+                xhr = false;
+            }
+            xhr = $.ajax(ops);
         };
     }
 

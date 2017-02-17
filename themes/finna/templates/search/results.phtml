@@ -96,7 +96,7 @@
         <div<?= !$browse ? ' class="col-sm-5 col-md-4 col-sm-pull-7 col-md-pull-8"' : ' class="col-xs-12"' ?>>
             <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $browse ? "browse_extended_" . ucfirst($browse) : 'Showing'])?>
         </div>
-        <? $this->layout()->srmessage = $this->translate('Showing') . ' ' . $this->results->getStartRecord() . ' - ' . $this->results->getEndRecord() . " / $recordTotal"; ?>
+        <? $this->layout()->srmessage = $this->transEsc('Showing') . ' ' . $this->results->getStartRecord() . ' - ' . $this->results->getEndRecord() . " / $recordTotal"; ?>
         <? if ($this->fromStreetSearch): ?>
           <div class="col-sm-7 col-sm-push-5 col-md-8 col-md-push-4 text-right hidden-print">
             <div class="update-location-button">
@@ -146,21 +146,31 @@
       <? endif; ?>
     <? else: ?>
     <div class="row">
-      <form class="form-inline col-xs-12" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
-        <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => ''])?>
-         <?= $this->authorizationNote($searchClassId) ?>
+      <div class="col-xs-12">
+        <?= $this->authorizationNote($searchClassId) ?>
+        <form id="search-cart-form" class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+        </form>
+        <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => '', 'formAttr' => 'search-cart-form'])?>
         <?=$this->render('search/list-' . $this->params->getView() . '.phtml')?>
-        <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_'])?>
-      </form>
+        <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form'])?>
+      </div>
     </div>
     <? endif; ?>
   </div>
   <? /* End Main Listing */ ?>
 
   <? /* Narrow Search Options */ ?>
-  <div class="<?=$recordTotal < 1 ? "col-sm-9" : $this->layoutClass('sidebar');?>">
+  <div id="sidebar" class="<?=$recordTotal < 1 ? "col-sm-9" : $this->layoutClass('sidebar');?>">
+    <? $messageAdded = false; ?>
     <? foreach ($this->results->getRecommendations('side') as $current): ?>
       <?=$this->recommend($current)?>
+      <? if (!$messageAdded) {
+        if (!isset($this->layout()->srmessage)) {
+          $this->layout()->srmessage = '';
+        }
+        $this->layout()->srmessage .= ' <a href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+        $messageAdded = true;
+      }?>
     <? endforeach; ?>
     <? if (($template = $this->content()->findTemplateForLng("content/Additions/search-post-facets")) && ($recordTotal > 0)): ?>
       <div class="row">

@@ -534,6 +534,11 @@ trait VoyagerFinna
             }
             return $res;
         }
+        return [
+            'payable' => false,
+            'amount' => 0,
+            'reason' => 'online_payment_minimum_fee'
+        ];
     }
 
     /**
@@ -541,13 +546,14 @@ trait VoyagerFinna
      *
      * This is called after a successful online payment.
      *
-     * @param array $patron Patron.
-     * @param int   $amount Amount to be registered as paid.
+     * @param array  $patron        Patron.
+     * @param int    $amount        Amount to be registered as paid.
+     * @param string $transactionId Transaction ID.
      *
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount)
+    public function markFeesAsPaid($patron, $amount, $transactionId)
     {
         $params
             = isset($this->config['OnlinePayment']['registrationParams'])
@@ -853,7 +859,24 @@ trait VoyagerFinna
     protected function executeSQL($sql, $bind = [])
     {
         $startTime = microtime(true);
-        $result = parent::executeSQL($sql, $bind);
+        try {
+            $result = parent::executeSQL($sql, $bind);
+        } catch (\PDOException $e) {
+            if ($e->getCode() != 3135) {
+                $this->error(
+                    "Re-throwing PDO exception in {$this->dbName}, code: "
+                    . $e->getCode() . ', message: ' . $e->getMessage()
+                );
+                throw $e;
+            }
+
+            $this->error(
+                "PDO connection to {$this->dbName} lost ("
+                . $e->getMessage() . '), retrying...'
+            );
+            $this->lazyDb = null;
+            $result = parent::executeSQL($sql, $bind);
+        }
         if (!empty($this->config['Debug']['durationLogPrefix'])) {
             list(, $caller) = debug_backtrace(false);
             file_put_contents(

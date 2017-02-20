@@ -178,7 +178,7 @@ class AccountExpirationReminders extends AbstractService
             $timePeriods .= "(finna_last_login >= '"
                          . $remindingDaysBegin[$i] . "' AND ";
             $timePeriods .= "finna_last_login <= '"
-                         . $remindingDaysEnd[$i] . "')"; 
+                         . $remindingDaysEnd[$i] . "')";
         }
 
         return $this->table->select(

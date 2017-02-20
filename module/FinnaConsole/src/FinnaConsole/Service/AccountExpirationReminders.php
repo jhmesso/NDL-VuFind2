@@ -111,7 +111,7 @@ class AccountExpirationReminders extends AbstractService
      */
     public function run($arguments)
     {
-        if (count($arguments) < 4 
+        if (count($arguments) < 4
             || (int) $arguments[1] < 180
         ) {
             $this->msg($this->getUsage());
@@ -123,7 +123,7 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini"); 
+        $siteConfig = \VuFind\Config\Locator::getLocalConfigPath("config.ini");
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind(
@@ -183,7 +183,7 @@ class AccountExpirationReminders extends AbstractService
 
         return $this->table->select(
             function (Select $select) use ($timePeriods) {
-                $select->where->notLike('username', 'deleted:%'); 
+                $select->where->notLike('username', 'deleted:%');
                 $select->where($timePeriods);
                 $select->where->notEqualTo(
                     'finna_last_login',

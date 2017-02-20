@@ -26,7 +26,6 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-
 namespace FinnaConsole\Service;
 use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
@@ -140,7 +139,7 @@ class AccountExpirationReminders extends AbstractService
         }
 
         if ($count === 0) {
-            $this->msg('No user accounts to remind.'); /*  */
+            $this->msg('No user accounts to remind.');
         } else {
             $this->msg("$count expiring user accounts reminded.");
         }
@@ -306,7 +305,6 @@ class AccountExpirationReminders extends AbstractService
         } else {
             return true;
         }
-            
     }
 
     /**
@@ -331,6 +329,4 @@ Usage:
 EOT;
 // @codingStandardsIgnoreEnd
     }
-
-
 }

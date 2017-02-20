@@ -48,7 +48,6 @@ use DateInterval;
  */
 class AccountExpirationReminders extends AbstractService
 {
-
     /**
      * Current view local configuration directory.
      *
@@ -306,7 +305,6 @@ class AccountExpirationReminders extends AbstractService
         } else {
             return true;
         }
-            
     }
 
     /**
@@ -331,6 +329,4 @@ Usage:
 EOT;
 // @codingStandardsIgnoreEnd
     }
-
-
 }

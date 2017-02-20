@@ -38,6 +38,7 @@ namespace FinnaConsole\Controller;
  */
 class UtilController extends \VuFindConsole\Controller\UtilController
 {
+
     /**
      * Sends reminders for expiring user accounts
      *

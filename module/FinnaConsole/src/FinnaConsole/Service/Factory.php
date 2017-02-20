@@ -42,6 +42,7 @@ use Zend\Console\Console,
  */
 class Factory
 {
+
     /**
      * Construct the console service for reminding on expiring user accounts
      *

@@ -232,15 +232,13 @@ class AccountExpirationReminders extends AbstractService
         ) {
             $language = $user->finna_language;
         }
-        
+
         $this->translator
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
         $login_link = $this->urlHelper->__invoke('myresearch-home');
 
-        syslog(LOG_INFO,"LINK: " . $login_link);
-        
         $params = [
             'login_method' => $user->finna_auth_method,
             'username' => substr($user->username, 1),
@@ -260,7 +258,10 @@ class AccountExpirationReminders extends AbstractService
         $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
         $resolver->attach($stack);
 
-        $subject = $this->translator->translate('account_expiration_subject',['%%expiration_date%%' => $params->expiration_date]);
+        $subject = $this->translator->translate(
+            'account_expiration_subject',
+            ['%%expiration_date%%' => $params['expiration_date']]
+        );
 
         $message = $this->renderer->render(
             'Email/account-expiration-reminder.phtml', $params

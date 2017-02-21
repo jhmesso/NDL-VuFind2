@@ -84,6 +84,13 @@ class AccountExpirationReminders extends AbstractService
      * @var \VuFind\Translator
      */
     protected $translator = null;
+    /**
+     * Translator
+     *
+     * @var \VuFind\Translator
+     */
+    protected $urlHelper = null;
+
 
     /**
      * Constructor
@@ -99,6 +106,7 @@ class AccountExpirationReminders extends AbstractService
         $this->table = $table;
         $this->renderer = $renderer;
         $this->translator = $translator;
+        $this->urlHelper = $renderer->plugin('url');
         $this->serviceManager = $serviceManager;
     }
 
@@ -229,16 +237,18 @@ class AccountExpirationReminders extends AbstractService
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
+        $login_link = $this->urlHelper->__invoke('myresearch-home');
+
+        syslog(LOG_INFO,"LINK: " . $login_link);
+        
         $params = [
-            'finna_auth_method' => $user->finna_auth_method,
+            'login_method' => $user->finna_auth_method,
             'username' => substr($user->username, 1),
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'email' => $user->email,
-            'lastLogin' => (new DateTime(
-                $user->finna_last_login
-            ))->format('d.m.Y H:i'),
-            'expireDate' =>  $expiration_datetime->format('d.m.Y')
+            'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
+            'login_link' => $login_link
         ];
 
         $templateDirs = [
@@ -250,8 +260,7 @@ class AccountExpirationReminders extends AbstractService
         $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
         $resolver->attach($stack);
 
-        $subject = $this->translator->translate('account_exp_subject');
-        $subject .= " " . $expiration_datetime->format('d.m.Y');
+        $subject = $this->translator->translate('account_expiration_subject',['%%expiration_date%%' => $params->expiration_date]);
 
         $message = $this->renderer->render(
             'Email/account-expiration-reminder.phtml', $params

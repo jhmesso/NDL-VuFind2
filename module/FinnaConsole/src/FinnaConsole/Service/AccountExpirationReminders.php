@@ -27,10 +27,13 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace FinnaConsole\Service;
+
 use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
+use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
+use VuFind\View\Helper\Root\Translate;
 
 use DateTime;
 use DateInterval;
@@ -46,7 +49,10 @@ use DateInterval;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class AccountExpirationReminders extends AbstractService
+    implements TranslatorAwareInterface
 {
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+
     /**
      * Current view local configuration directory.
      *
@@ -79,35 +85,26 @@ class AccountExpirationReminders extends AbstractService
     protected $serviceManager = null;
 
     /**
-     * Translator
+     * urllHelper
      *
-     * @var \VuFind\Translator
-     */
-    protected $translator = null;
-    /**
-     * Translator
-     *
-     * @var \VuFind\Translator
+     * @var urlHelper
      */
     protected $urlHelper = null;
-
 
     /**
      * Constructor
      *
      * @param Finna\Db\Table\User            $table          User table.
      * @param Zend\View\Renderer\PhpRenderer $renderer       View renderer.
-     * @param VuFind\Translator              $translator     Translator.
      * @param ServiceManager                 $serviceManager Service manager.
      */
     public function __construct(
-        $table, $renderer, $translator, $serviceManager
+        $table, $renderer, $serviceManager
     ) {
         $this->table = $table;
         $this->renderer = $renderer;
-        $this->translator = $translator;
-        $this->urlHelper = $renderer->plugin('url');
         $this->serviceManager = $serviceManager;
+        $this->urlHelper = $renderer->plugin('url');
     }
 
     /**
@@ -258,7 +255,7 @@ class AccountExpirationReminders extends AbstractService
         $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
         $resolver->attach($stack);
 
-        $subject = $this->translator->translate(
+        $subject = $this->translate(
             'account_expiration_subject',
             ['%%expiration_date%%' => $params['expiration_date']]
         );

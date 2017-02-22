@@ -85,7 +85,7 @@ class AccountExpirationReminders extends AbstractService
     protected $serviceManager = null;
 
     /**
-     * urllHelper
+     * UrllHelper
      *
      * @var urlHelper
      */
@@ -236,6 +236,19 @@ class AccountExpirationReminders extends AbstractService
 
         $login_link = $this->urlHelper->__invoke('myresearch-home');
 
+        $urlParts = explode('/', $this->currentViewPath);
+        $urlView = array_pop($urlParts);
+        $urlInstitution = array_pop($urlParts);
+
+        if ($urlInstitution == null) {
+            $urlInstitution = 'www';
+        }
+
+        $baseUrl = 'https://' . $urlInstitution . '.finna.fi';
+        if ($urlView != $this::DEFAULT_PATH) {
+            $baseUrl .= "/$urlView";
+        }
+
         $params = [
             'login_method' => $user->finna_auth_method,
             'username' => substr($user->username, 1),
@@ -243,7 +256,7 @@ class AccountExpirationReminders extends AbstractService
             'lastname' => $user->lastname,
             'email' => $user->email,
             'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
-            'login_link' => $login_link
+            'login_link' => $baseUrl  . $login_link
         ];
 
         $templateDirs = [

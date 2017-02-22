@@ -256,7 +256,7 @@ class AccountExpirationReminders extends AbstractService
             'lastname' => $user->lastname,
             'email' => $user->email,
             'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
-            'login_link' => $baseUrl  . $login_link
+            'login_link' => $baseUrl . $login_link
         ];
 
         $templateDirs = [

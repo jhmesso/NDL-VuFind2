@@ -130,8 +130,8 @@ class AccountExpirationReminders extends AbstractService
      */
     public function run($arguments)
     {
-        if (count($arguments) < 4
-            || (int) $arguments[1] < 180
+        if (count($arguments) < 5
+            || (int) $arguments[2] < 180
         ) {
             $this->msg($this->getUsage());
             return false;
@@ -290,7 +290,7 @@ class AccountExpirationReminders extends AbstractService
             $baseUrl .= "/$urlView";
         }
 
-        $login_link = $this->urlHelper->__invoke('myresearch-home');
+        $login_path = $this->urlHelper->__invoke('myresearch-home');
 
         // TODO: prevent extra slashes on URL
         
@@ -301,7 +301,7 @@ class AccountExpirationReminders extends AbstractService
             'lastname' => $user->lastname,
             'email' => $user->email,
             'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
-            'login_link' => $baseUrl . $login_link
+            'login_link' => $baseUrl . $login_path
         ];
 
         $subject = $this->translate(
@@ -342,16 +342,20 @@ class AccountExpirationReminders extends AbstractService
     {
         // Current view local configuration directory
         $this->baseDir = isset($arguments[0]) ? $arguments[0] : false;
+        // Current view local configuration directory
+        $this->viewBaseDir = isset($arguments[1]) ? $arguments[1] : false;
+
         // Inactive user account will expire in expirationDays days
-        $this->expirationDays = (isset($arguments[1])
-                                  && $arguments[1] >= 180) ? $arguments[1] : false;
+        $this->expirationDays = (isset($arguments[2])
+                                  && $arguments[2] >= 180) ? $arguments[2] : false;
         // Start reminding remindDaysBefore before expiration
-        $this->remindDaysBefore = (isset($arguments[2]) &&
-                                   $arguments[2] > 0) ? $arguments[2] : false;
+        $this->remindDaysBefore = (isset($arguments[3]) &&
+                                   $arguments[3] > 0) ? $arguments[3] : false;
         // Remind between remindingFrequency days when reminding period has started
-        $this->remindingFrequency = (isset($arguments[3])
-                                     && $arguments[3] > 0) ? $arguments[3] : false;
+        $this->remindingFrequency = (isset($arguments[4])
+                                     && $arguments[4] > 0) ? $arguments[4] : false;
         if (!$this->baseDir
+            || !$this->viewBaseDir
             || !$this->expirationDays
             || !$this->remindDaysBefore
             || !$this->remindingFrequency
@@ -372,16 +376,17 @@ class AccountExpirationReminders extends AbstractService
         // @codingStandardsIgnoreStart
         return <<<EOT
 Usage:
-  php index.php util expiration_reminders <vufind_dir> <expiration_days> <remind_days_before> <frequency>
+  php index.php util expiration_reminders <vufind_dir> <view_dir> <expiration_days> <remind_days_before> <frequency>
 
   Sends a reminder for those users whose account will expire in <remind_days_before> days.
     vufind_dir          VuFind base installation directory
+    view_dir            View directory
     expiration_days     After how many inactive days a user account will expire.
                         Values less than 180 are not valid.
     remind_days_before  Begin reminding the user x days before the actual expiration
     frequency           How often (in days) the user will be reminded
 
 EOT;
-// @codingStandardsIgnoreEnd
+        // @codingStandardsIgnoreEnd
     }
 }

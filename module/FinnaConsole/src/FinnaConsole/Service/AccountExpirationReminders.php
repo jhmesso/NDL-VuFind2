@@ -342,15 +342,18 @@ class AccountExpirationReminders extends AbstractService
     {
         // Current view local configuration directory
         $this->baseDir = isset($arguments[0]) ? $arguments[0] : false;
-        // Current view local configuration directory
+
+        // Current view local basedir
         $this->viewBaseDir = isset($arguments[1]) ? $arguments[1] : false;
 
         // Inactive user account will expire in expirationDays days
         $this->expirationDays = (isset($arguments[2])
                                   && $arguments[2] >= 180) ? $arguments[2] : false;
+
         // Start reminding remindDaysBefore before expiration
         $this->remindDaysBefore = (isset($arguments[3]) &&
                                    $arguments[3] > 0) ? $arguments[3] : false;
+
         // Remind between remindingFrequency days when reminding period has started
         $this->remindingFrequency = (isset($arguments[4])
                                      && $arguments[4] > 0) ? $arguments[4] : false;

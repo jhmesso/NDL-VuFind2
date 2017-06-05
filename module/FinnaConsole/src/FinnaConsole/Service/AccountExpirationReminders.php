@@ -231,34 +231,15 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        list($userInstitution,) = explode(':', $user['username'], 2);
+        $templateDirs = [ 
+            "{$this->baseDir}/themes/finna/templates",
+        ];
 
-        if (!$this->currentInstitution
-            || $userInstitution != $this->currentInstitution
-        ) {
-            $templateDirs = [
-                "{$this->baseDir}/themes/finna/templates",
-            ];
-            if (!$viewPath = $this->resolveViewPath($userInstitution)) {
-                $this->err(
-                    "Could not resolve view path for user {$user->username}"
-                    . " (id {$user->id})"
-                );
-                return false;
-            } else {
-                $templateDirs[] = "$viewPath/themes/custom/templates";
-            }
-            $this->currentInstitution = $userInstitution;
-            $this->currentViewPath = $viewPath;
-
-            $resolver = new AggregateResolver();
-            $this->renderer->setResolver($resolver);
-            $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
-            $resolver->attach($stack);
-
-            $siteConfig = $viewPath . '/local/config/vufind/config.ini';
-            $this->currentSiteConfig = parse_ini_file($siteConfig, true);
-        }
+        $resolver = new AggregateResolver();
+        $this->renderer->setResolver($resolver);
+        
+        $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
+        $resolver->attach($stack);
 
         $expiration_datetime = new DateTime($user->finna_last_login);
         $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));
@@ -277,22 +258,9 @@ class AccountExpirationReminders extends AbstractService
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
-        $urlParts = explode('/', $this->currentViewPath);
-        $urlView = array_pop($urlParts);
-        $urlInstitution = array_pop($urlParts);
-
-        if ($urlInstitution == null) {
-            $urlInstitution = 'www';
-        }
-
-        $baseUrl = 'https://' . $urlInstitution . '.finna.fi';
-        if ($urlView != $this::DEFAULT_PATH) {
-            $baseUrl .= "/$urlView";
-        }
-
+        $baseUrl = $this->currentSiteConfig['Site']['url'];
+        $this->currentViewPath = $baseUrl;
         $login_path = $this->urlHelper->__invoke('myresearch-home');
-
-        // TODO: prevent extra slashes on URL
         
         $params = [
             'login_method' => $user->finna_auth_method,
@@ -300,6 +268,7 @@ class AccountExpirationReminders extends AbstractService
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'email' => $user->email,
+            'site_title' => $this->currentSiteConfig['Site']['title'],
             'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
             'login_link' => $baseUrl . $login_path
         ];
@@ -308,7 +277,7 @@ class AccountExpirationReminders extends AbstractService
             'account_expiration_subject',
             ['%%expiration_date%%' => $params['expiration_date']]
         );
-        
+
         $message = $this->renderer->render(
             'Email/account-expiration-reminder.phtml', $params
         );

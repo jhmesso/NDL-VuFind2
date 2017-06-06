@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2015.
+ * Copyright (C) The National Library of Finland 2012-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -36,6 +37,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Eoghan O'Carragain <Eoghan.OCarragan@gmail.com>
  * @author   Luke O'Sullivan <l.osullivan@swansea.ac.uk>
@@ -181,9 +183,10 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         $bibliography = [];
         foreach ($record->xpath('//bibliography') as $node) {
             // Filter out Portti links since they're displayed in links
-            if (!preg_match(
+            $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/', (string)$node->p
-            )) {
+            );
+            if (!$match) {
                 $bibliography[] = (string)$node->p;
             }
         }
@@ -443,10 +446,11 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         $record = $this->getSimpleXML();
         foreach ($record->xpath('//daoloc') as $node) {
             $url = (string)$node->attributes()->href;
-            if (isset($node->attributes()->role) && in_array(
+            $image = isset($node->attributes()->role) && in_array(
                 $node->attributes()->role,
                 ['image_thumbnail', 'image_reference']
-            )) {
+            );
+            if ($image) {
                 continue;
             }
 
@@ -472,11 +476,12 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
 
         // Portti links parsed from bibliography
         foreach ($record->xpath('//bibliography') as $node) {
-            if (preg_match(
+            $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/',
                 (string)$node->p,
                 $matches
-            )) {
+            );
+            if ($match) {
                 $urls[] = [
                     'url' => $matches[2],
                     'desc' => $matches[1]
@@ -570,5 +575,19 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
             $url
         );
         return $url;
+    }
+
+    /**
+     * Get the unitdate field.
+     *
+     * @return string
+     */
+    public function getUnitDate()
+    {
+        $unitdate = $this->getSimpleXML()->xpath('did/unitdate');
+        if (isset($unitdate[0])) {
+            return (string)$unitdate[0];
+        }
+        return '';
     }
 }

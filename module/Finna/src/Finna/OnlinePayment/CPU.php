@@ -134,9 +134,15 @@ class CPU extends BaseHandler
 
         foreach ($fines as $fine) {
             $fineType = isset($fine['fine']) ? $fine['fine'] : '';
-            $fineDesc = null;
+            $fineDesc = '';
             if (!empty($fineType)) {
-                $fineDesc = $fineType;
+                $fineDesc = $this->translator->translate("fine_status_$fineType");
+                if ("fine_status_$fineType" === $fineDesc) {
+                    $fineDesc = $this->translator->translate("status_$fineType");
+                    if ("status_$fineType" === $fineDesc) {
+                        $fineDesc = $fineType;
+                    }
+                }
             }
             if (!empty($fine['title'])) {
                 $fineDesc .= ' (' . $fine['title'] . ')';
@@ -144,7 +150,7 @@ class CPU extends BaseHandler
             $code = isset($productCodeMappings[$fineType])
                 ? $productCodeMappings[$fineType] : $productCode;
             $product = new \Cpu_Client_Product(
-                $code, 1, $fine['amount'], $fineDesc
+                $code, 1, $fine['amount'], $fineDesc ?: null
             );
             $payment = $payment->addProduct($product);
         }
@@ -223,7 +229,7 @@ class CPU extends BaseHandler
         if ($status === self::STATUS_PENDING) {
             // Pending
 
-            if (!$this->createTransaction(
+            $success = $this->createTransaction(
                 $orderNumber,
                 $driver,
                 $user->id,
@@ -232,7 +238,8 @@ class CPU extends BaseHandler
                 $transactionFee,
                 $currency,
                 $fines
-            )) {
+            );
+            if (!$success) {
                 return false;
             }
             $this->redirectToPayment($response->PaymentAddress);

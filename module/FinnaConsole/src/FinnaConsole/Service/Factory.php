@@ -53,8 +53,10 @@ class Factory
     {
         $table = $sm->get('VuFind\DbTablePluginManager')->get('User');
         $renderer = $sm->get('viewmanager')->getRenderer();
-        
-        return new AccountExpirationReminders($table, $renderer, $sm);
+        $configReader = $sm->get('VuFind\Config');
+        $translator = $sm->get('VuFind\Translator');
+
+        return new AccountExpirationReminders($table, $renderer, $configReader, $translator, $sm);
     }
     
     /**

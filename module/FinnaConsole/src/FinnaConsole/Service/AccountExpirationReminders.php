@@ -32,8 +32,6 @@ use Zend\Db\Sql\Select;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
-use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
-use VuFind\View\Helper\Root\Translate;
 
 use DateTime;
 use DateInterval;
@@ -49,8 +47,8 @@ use DateInterval;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class AccountExpirationReminders extends AbstractService
-    implements TranslatorAwareInterface
 {
+
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
@@ -106,17 +104,36 @@ class AccountExpirationReminders extends AbstractService
     protected $currentInstitution = null;
 
     /**
+     * Datasource configuration
+     *
+     * @var \Zend\Config\Config
+     */
+    protected $datasourceConfig = null;
+
+    /**
+     * configReader
+     *
+     * @var \VuFind\Config
+     */
+    protected $configReader = null;
+
+
+    /**
      * Constructor
      *
      * @param Finna\Db\Table\User            $table          User table.
      * @param Zend\View\Renderer\PhpRenderer $renderer       View renderer.
+     * @param VuFind\Config                  $configReader         Config reader.
+     * @param VuFind\Translator              $translator           Translator.
      * @param ServiceManager                 $serviceManager Service manager.
      */
     public function __construct(
-        $table, $renderer, $serviceManager
+        $table, $renderer, $configReader, $translator, $serviceManager
     ) {
         $this->table = $table;
         $this->renderer = $renderer;
+        $this->datasourceConfig = $configReader->get('datasources');
+        $this->translator = $translator;
         $this->serviceManager = $serviceManager;
         $this->urlHelper = $renderer->plugin('url');
     }
@@ -231,15 +248,35 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        $templateDirs = [ 
-            "{$this->baseDir}/themes/finna/templates",
-        ];
+        list($userInstitution,) = explode(':', $user['username'], 2);
+        $userInstitution = 'alli';
 
-        $resolver = new AggregateResolver();
-        $this->renderer->setResolver($resolver);
-        
-        $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
-        $resolver->attach($stack);
+        if (!$this->currentInstitution
+            || $userInstitution != $this->currentInstitution
+        ) {
+            $templateDirs = [
+                "{$this->baseDir}/themes/finna/templates",
+            ];
+            if (!$viewPath = $this->resolveViewPath($userInstitution)) {
+                $this->err(
+                    "Could not resolve view path for user {$user->username}"
+                    . " (id {$user->id})"
+                );
+                return false;
+            } else {
+                $templateDirs[] = "$viewPath/themes/custom/templates";
+            }
+            $this->currentInstitution = $userInstitution;
+            $this->currentViewPath = $viewPath;
+
+            $resolver = new AggregateResolver();
+            $this->renderer->setResolver($resolver);
+            $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
+            $resolver->attach($stack);
+
+            $siteConfig = $viewPath . '/local/config/vufind/config.ini';
+            $this->currentSiteConfig = parse_ini_file($siteConfig, true);
+        }
 
         $expiration_datetime = new DateTime($user->finna_last_login);
         $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));

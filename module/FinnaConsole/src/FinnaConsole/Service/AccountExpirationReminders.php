@@ -111,7 +111,7 @@ class AccountExpirationReminders extends AbstractService
     protected $datasourceConfig = null;
 
     /**
-     * configReader
+     * ConfigReader
      *
      * @var \VuFind\Config
      */
@@ -123,8 +123,8 @@ class AccountExpirationReminders extends AbstractService
      *
      * @param Finna\Db\Table\User            $table          User table.
      * @param Zend\View\Renderer\PhpRenderer $renderer       View renderer.
-     * @param VuFind\Config                  $configReader         Config reader.
-     * @param VuFind\Translator              $translator           Translator.
+     * @param VuFind\Config                  $configReader   Config reader.
+     * @param VuFind\Translator              $translator     Translator.
      * @param ServiceManager                 $serviceManager Service manager.
      */
     public function __construct(
@@ -249,7 +249,6 @@ class AccountExpirationReminders extends AbstractService
         }
 
         list($userInstitution,) = explode(':', $user['username'], 2);
-        $userInstitution = 'alli';
 
         if (!$this->currentInstitution
             || $userInstitution != $this->currentInstitution

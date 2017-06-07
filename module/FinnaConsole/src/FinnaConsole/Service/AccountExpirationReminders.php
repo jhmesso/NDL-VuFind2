@@ -89,6 +89,13 @@ class AccountExpirationReminders extends AbstractService
     protected $serviceManager = null;
 
     /**
+     * Translator
+     *
+     * @var Zend\I18n\Translator\Translator
+     */
+    protected $translator = null;
+
+    /**
      * UrllHelper
      *
      * @var urlHelper

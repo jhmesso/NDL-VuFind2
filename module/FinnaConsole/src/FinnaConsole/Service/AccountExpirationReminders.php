@@ -248,7 +248,7 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        list($userInstitution,) = explode(':', $user['username'], 2);
+        list($userInstitution,$userName) = explode(':', $user['username'], 2);
 
         if (!$this->currentInstitution
             || $userInstitution != $this->currentInstitution
@@ -265,6 +265,7 @@ class AccountExpirationReminders extends AbstractService
             } else {
                 $templateDirs[] = "$viewPath/themes/custom/templates";
             }
+
             $this->currentInstitution = $userInstitution;
             $this->currentViewPath = $viewPath;
 
@@ -294,19 +295,20 @@ class AccountExpirationReminders extends AbstractService
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
-        $baseUrl = $this->currentSiteConfig['Site']['url'];
-        $this->currentViewPath = $baseUrl;
         $login_path = $this->urlHelper->__invoke('myresearch-home');
+        if (!$this->currentInstitution || $this->currentInstitution == 'national') {
+            $this->currentInstitution = 'www';
+        }
         
         $params = [
             'login_method' => $user->finna_auth_method,
-            'username' => substr($user->username, 1),
+            'username' => $userName,
             'firstname' => $user->firstname,
-            'lastname' => $user->lastname,
+            'fullname' =>  $user->firstname . " " . $user->lastname,
             'email' => $user->email,
-            'site_title' => $this->currentSiteConfig['Site']['title'],
             'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
-            'login_link' => $baseUrl . $login_path
+            'login_link' => 'https://' . $this->currentInstitution .
+                            '.finna.fi' . $login_path
         ];
 
         $subject = $this->translate(
@@ -314,6 +316,7 @@ class AccountExpirationReminders extends AbstractService
             ['%%expiration_date%%' => $params['expiration_date']]
         );
 
+        
         $message = $this->renderer->render(
             'Email/account-expiration-reminder.phtml', $params
         );

@@ -48,7 +48,6 @@ use DateInterval;
  */
 class AccountExpirationReminders extends AbstractService
 {
-
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
@@ -116,7 +115,6 @@ class AccountExpirationReminders extends AbstractService
      * @var \VuFind\Config
      */
     protected $configReader = null;
-
 
     /**
      * Constructor

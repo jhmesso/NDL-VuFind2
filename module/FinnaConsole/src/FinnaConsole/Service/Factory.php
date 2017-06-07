@@ -56,7 +56,9 @@ class Factory
         $configReader = $sm->get('VuFind\Config');
         $translator = $sm->get('VuFind\Translator');
 
-        return new AccountExpirationReminders($table, $renderer, $configReader, $translator, $sm);
+        return new AccountExpirationReminders(
+            $table, $renderer, $configReader, $translator, $sm
+        );
     }
     
     /**
